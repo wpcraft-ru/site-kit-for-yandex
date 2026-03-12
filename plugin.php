@@ -3,13 +3,13 @@
  * Plugin Name: Site Kit for Yandex
  * Plugin URI: https://example.com
  * Description: WordPress plugin for integrating Yandex services with your site.
- * Version: 1.0.0
  * Author: Your Name
  * Author URI: https://example.com
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: site-kit-for-yandex
  * Domain Path: /languages
+ * Version: 0.1.260115
  */
 
 // Exit if accessed directly
@@ -17,16 +17,32 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-// Define plugin constants
-define('SITE_KIT_YANDEX_VERSION', '1.0.0');
-define('SITE_KIT_YANDEX_DIR', plugin_dir_path(__FILE__));
-define('SITE_KIT_YANDEX_URL', plugin_dir_url(__FILE__));
-
 /**
  * Main plugin singleton.
  */
 final class SiteKitForYandex
 {
+    /**
+     * Plugin version.
+     *
+     * @var string
+     */
+    private $version;
+
+    /**
+     * Absolute plugin directory path.
+     *
+     * @var string
+     */
+    private $dir;
+
+    /**
+     * Plugin URL.
+     *
+     * @var string
+     */
+    private $url;
+
     /**
      * Singleton instance.
      *
@@ -39,7 +55,8 @@ final class SiteKitForYandex
      */
     private function __construct()
     {
-        // Bootstrap plugin components here.
+        $this->dir = plugin_dir_path(__FILE__);
+        $this->url = plugin_dir_url(__FILE__);
     }
 
     /**
