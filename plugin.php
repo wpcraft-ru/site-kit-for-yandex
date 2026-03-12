@@ -1,10 +1,10 @@
 <?php
 /**
- * Plugin Name: Site Kit for Yandex
- * Plugin URI: https://example.com
+ * Plugin Name: @ Site Kit for Yandex
+ * Plugin URI: https://wpcraft.ru
  * Description: WordPress plugin for integrating Yandex services with your site.
- * Author: Your Name
- * Author URI: https://example.com
+ * Author: WPCraft
+ * Author URI: https://wpcraft.ru
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: site-kit-for-yandex
@@ -17,6 +17,7 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
+// use SiteKitForYandex;
 /**
  * Main plugin singleton.
  */
@@ -50,6 +51,17 @@ final class SiteKitForYandex
      */
     private static $instance = null;
 
+
+    /**
+     * Get settings instance.
+     *
+     * @return \SiteKitForYandex\Settings
+     */
+    public function settings()
+    {
+        return new \SiteKitForYandex\Settings();
+    }
+
     /**
      * Private constructor to prevent direct instantiation.
      */
@@ -57,6 +69,12 @@ final class SiteKitForYandex
     {
         $this->dir = plugin_dir_path(__FILE__);
         $this->url = plugin_dir_url(__FILE__);
+
+        foreach (glob($this->dir.'includes/*.php') as $file) {
+            require_once $file;
+        }
+
+        \SiteKitForYandex\Settings::init();
     }
 
     /**
