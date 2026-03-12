@@ -1,0 +1,17 @@
+{
+  "name": "site-kit-for-yandex",
+  "version": "1.0.0",
+  "description": "",
+  "license": "MIT",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "wp-env start --runtime=playground",
+    "stop": "wp-env stop",
+    "wp-env": "wp-env"
+  },
+  "dependencies": {
+    "@wordpress/env": "^11.1.0"
+  }
+}
