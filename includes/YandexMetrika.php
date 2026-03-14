@@ -43,6 +43,17 @@ class YandexMetrika
      */
     public static function renderSectionText()
     {
+
+        //Просмотр метрики по адресу https://metrika.yandex.ru/
+
+
+        printf(
+            '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
+            esc_html__('Просмотр метрики осуществляется через сайт', 'site-kit-for-yandex'),
+            esc_url('https://metrika.yandex.ru/'),
+            esc_html__('Яндекс.Метрика', 'site-kit-for-yandex')
+        );
+
         printf(
             '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
             esc_html__('Для подключения Яндекс.Метрики используйте официальный плагин WordPress.', 'site-kit-for-yandex'),
