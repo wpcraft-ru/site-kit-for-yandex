@@ -53,11 +53,11 @@ final class SiteKitForYandex
 
 
     /**
-     * Get settings instance.
+     * Get configuration instance.
      *
      * @return \SiteKitForYandex\Settings
      */
-    public function settings()
+    public function config()
     {
         return new \SiteKitForYandex\Settings();
     }
@@ -75,6 +75,8 @@ final class SiteKitForYandex
         }
 
         \SiteKitForYandex\Settings::init();
+
+        
     }
 
     /**
@@ -99,7 +101,27 @@ final class SiteKitForYandex
     public static function init()
     {
         self::instance();
+        add_filter('plugin_action_links_'.plugin_basename(__FILE__), [self::instance(), 'plugin_action_links']);
         // Register hooks/services here.
+    }
+
+    /**
+     * Add plugin action links in plugins list.
+     *
+     * @param array $links Existing action links.
+     * @return array
+     */
+    public function plugin_action_links($links)
+    {
+        $settings_link = sprintf(
+            '<a href="%s">%s</a>',
+            esc_url(admin_url('options-general.php?page=site-kit-for-yandex')),
+            esc_html__('Settings', 'site-kit-for-yandex')
+        );
+
+        array_unshift($links, $settings_link);
+
+        return $links;
     }
 
     /**
