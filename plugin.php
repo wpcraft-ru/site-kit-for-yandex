@@ -51,6 +51,23 @@ final class SiteKitForYandex
      */
     private static $instance = null;
 
+    /**
+     * Run plugin startup logic.
+     *
+     * @return void
+     */
+    public static function init()
+    {
+        self::instance();
+        foreach (glob(self::$instance->dir.'includes/*.php') as $file) {
+            require_once $file;
+        }
+
+        \SiteKitForYandex\Settings::init();
+
+        add_filter('plugin_action_links_'.plugin_basename(__FILE__), [self::instance(), 'plugin_action_links']);
+        // Register hooks/services here.
+    }
 
     /**
      * Get configuration instance.
@@ -69,14 +86,6 @@ final class SiteKitForYandex
     {
         $this->dir = plugin_dir_path(__FILE__);
         $this->url = plugin_dir_url(__FILE__);
-
-        foreach (glob($this->dir.'includes/*.php') as $file) {
-            require_once $file;
-        }
-
-        \SiteKitForYandex\Settings::init();
-
-        
     }
 
     /**
@@ -91,18 +100,6 @@ final class SiteKitForYandex
         }
 
         return self::$instance;
-    }
-
-    /**
-     * Run plugin startup logic.
-     *
-     * @return void
-     */
-    public static function init()
-    {
-        self::instance();
-        add_filter('plugin_action_links_'.plugin_basename(__FILE__), [self::instance(), 'plugin_action_links']);
-        // Register hooks/services here.
     }
 
     /**
