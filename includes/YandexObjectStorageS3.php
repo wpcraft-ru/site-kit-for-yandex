@@ -3,8 +3,9 @@
 namespace SiteKitForYandex;
 
 
-// @todo rename to YandexObjectStorage
-class S3
+YandexObjectStorageS3::init();
+
+class YandexObjectStorageS3
 {
     /**
      * Settings section ID.
@@ -18,7 +19,7 @@ class S3
 
     public static function init()
     {
-        add_action('admin_init', [self::class, 'registerSettingsSection']);
+        add_action('admin_init', [self::class, 'registerSettingsSection'], 90);
     }
 
     /**

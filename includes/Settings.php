@@ -2,6 +2,8 @@
 
 namespace SiteKitForYandex;
 
+Settings::init();
+
 final class Settings
 {
     public static function init()

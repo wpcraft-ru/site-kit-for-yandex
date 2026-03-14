@@ -63,8 +63,6 @@ final class SiteKitForYandex
             require_once $file;
         }
 
-        \SiteKitForYandex\Settings::init();
-        \SiteKitForYandex\S3::init();
 
         add_filter('plugin_action_links_'.plugin_basename(__FILE__), [self::instance(), 'plugin_action_links']);
         
