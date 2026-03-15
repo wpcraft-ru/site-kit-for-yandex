@@ -20,6 +20,18 @@ class YandexWebmaster
     {
         add_action('admin_init', [self::class, 'registerSettingsSection']);
         add_action('admin_menu', [self::class, 'addToolsPage']);
+
+        //site_kit_for_yandex_webmaster_tools_page_content
+        add_action('site_kit_for_yandex_webmaster_tools_page_content', [self::class, 'renderToolsPageContent']);
+    }
+
+
+    public static function renderToolsPageContent()
+    {
+       echo 111;
+       //get info about site https://yandex.ru/dev/webmaster/doc/ru/reference/hosts-id 
+
+       
     }
 
     /**
@@ -68,6 +80,7 @@ class YandexWebmaster
                 ?>
             </p>
 
+            <?php do_action('site_kit_for_yandex_webmaster_tools_page_content'); ?>
         </div>
         <?php
     }
@@ -82,40 +95,30 @@ class YandexWebmaster
         add_settings_section(
             self::$sectionId,
             __('Yandex Webmaster', 'site-kit-for-yandex'),
-            [self::class, 'renderSectionText'],
+            function () {
+                printf(
+                    '<p>%1$s <a href="%2$s">%3$s</a>.</p>',
+                    esc_html__('Сводка по сайту доступна на странице', 'site-kit-for-yandex'),
+                    esc_url(admin_url('tools.php?page=site-kit-for-yandex-webmaster')),
+                    esc_html__('Yandex Webmaster Tools', 'site-kit-for-yandex')
+                );
+
+                printf(
+                    '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
+                    esc_html__('Подключение сайта и просмотр данных Яндекс.Вебмастера осуществляется через сайт', 'site-kit-for-yandex'),
+                    esc_url('https://webmaster.yandex.ru/sites/'),
+                    esc_html__('Яндекс.Вебмастер', 'site-kit-for-yandex')
+                );
+
+                printf(
+                    '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
+                    esc_html__('Для интеграции используем API Яндекс.Вебмастера.', 'site-kit-for-yandex'),
+                    esc_url('https://yandex.ru/dev/webmaster/'),
+                    esc_html__('Документация API', 'site-kit-for-yandex')
+                );
+            },
             self::$pageSlug
         );
     }
 
-    /**
-     * Render Yandex Webmaster section description text.
-     *
-     * @return void
-     */
-    public static function renderSectionText()
-    {
-
-        // Сводка /wp-admin/tools.php?page=site-kit-for-yandex-webmaster
-        printf(
-            '<p>%1$s <a href="%2$s">%3$s</a>.</p>',
-            esc_html__('Сводка по сайту доступна на странице', 'site-kit-for-yandex'),
-            esc_url(admin_url('tools.php?page=site-kit-for-yandex-webmaster')),
-            esc_html__('Yandex Webmaster Tools', 'site-kit-for-yandex')
-        );
-
-        printf(
-            '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
-            esc_html__('Подключение сайта и просмотр данных Яндекс.Вебмастера осуществляется через сайт', 'site-kit-for-yandex'),
-            esc_url('https://webmaster.yandex.ru/sites/'),
-            esc_html__('Яндекс.Вебмастер', 'site-kit-for-yandex')
-        );
-
-        printf(
-            '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
-            esc_html__('Для интеграции используем API Яндекс.Вебмастера.', 'site-kit-for-yandex'),
-            esc_url('https://yandex.ru/dev/webmaster/'),
-            esc_html__('Документация API', 'site-kit-for-yandex')
-        );
-
-    }
 }

@@ -2,7 +2,6 @@
 
 namespace SiteKitForYandex;
 
-
 YandexObjectStorageS3::init();
 
 class YandexObjectStorageS3
