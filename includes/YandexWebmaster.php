@@ -22,26 +22,211 @@ class YandexWebmaster
         add_action('admin_menu', [self::class, 'addToolsPage']);
 
         //site_kit_for_yandex_webmaster_tools_page_content
-        add_action('site_kit_for_yandex_webmaster_tools_page_content', [self::class, 'host_search_queries_popular']);
+        // add_action('site_kit_for_yandex_webmaster_tools_page_content', [self::class, 'renderSqi']);
+        add_action('site_kit_for_yandex_webmaster_tools_page_content', [self::class, 'renderSummary']);
     }
 
-
-    public static function host_search_queries_popular()
+    public static function renderSqi()
     {
-        // echo 111;
         //get info about site https://yandex.ru/dev/webmaster/doc/ru/reference/hosts-id 
 
         ?>
 
-        <h2>Популярные запросы</h2>
-        <?php 
+        <h2>Индекс качества сайта (ИКС)</h2>
+        <?php
 
-        //get pop query https://yandex.ru/dev/webmaster/doc/ru/reference/host-search-queries-popular
-        $dataTest2 = self::apiSite('search-queries/popular?order_by=TOTAL_SHOWS&query_indicator=TOTAL_SHOWS&limit=100');
-        dd($dataTest2);
+        //get sqi history https://yandex.ru/dev/webmaster/doc/ru/reference/sqi-history
+        $value = self::getSqi();
+        printf('<p>ИКС: <strong>%s</strong></p>', esc_html($value));
+        // dd($value);
+    }
 
+    public static function renderSummary()
+    {
+        ?>
+
+        <h2>Сводка по сайту</h2>
+        <?php
+
+        $data = self::getSummary();
+        if (is_wp_error($data)) {
+            printf(
+                '<p>%s</p>',
+                esc_html($data->get_error_message())
+            );
+
+            return;
+        }
+
+        $sqi = isset($data['sqi']) ? (int) $data['sqi'] : null;
+        $excludedPagesCount = isset($data['excluded_pages_count']) ? (int) $data['excluded_pages_count'] : null;
+        $searchablePagesCount = isset($data['searchable_pages_count']) ? (int) $data['searchable_pages_count'] : null;
+        $siteProblems = isset($data['site_problems']) && is_array($data['site_problems']) ? $data['site_problems'] : [];
+        ?>
+        <p>
+            <?php
+            printf(
+                '%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>.',
+                esc_html__('Просмотр информации о сайте в целом:', 'site-kit-for-yandex'),
+                esc_url('https://webmaster.yandex.ru/'),
+                esc_html__('webmaster.yandex.ru', 'site-kit-for-yandex')
+            );
+            ?>
+        </p>
+        <table class="widefat striped" style="max-width: 720px;">
+            <tbody>
+                <tr>
+                    <td><strong><?php echo esc_html__('Индекс качества сайта (ИКС)', 'site-kit-for-yandex'); ?></strong></td>
+                    <td><?php echo null !== $sqi ? esc_html(number_format_i18n($sqi)) : '—'; ?></td>
+                </tr>
+                <tr>
+                    <td><strong><?php echo esc_html__('Страниц в поиске', 'site-kit-for-yandex'); ?></strong></td>
+                    <td><?php echo null !== $searchablePagesCount ? esc_html(number_format_i18n($searchablePagesCount)) : '—'; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong><?php echo esc_html__('Исключенных страниц', 'site-kit-for-yandex'); ?></strong></td>
+                    <td><?php echo null !== $excludedPagesCount ? esc_html(number_format_i18n($excludedPagesCount)) : '—'; ?>
+                    </td>
+                </tr>
+                <?php if (! empty($siteProblems)) : ?>
+                    <?php foreach ($siteProblems as $severity => $count) : ?>
+                        <tr>
+                            <td>
+                                <strong>
+                                    <?php
+                                    printf(
+                                        esc_html__('Проблемы сайта (%s)', 'site-kit-for-yandex'),
+                                        esc_html($severity)
+                                    );
+                                    ?>
+                                </strong>
+                            </td>
+                            <td><?php echo esc_html(number_format_i18n((int) $count)); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else : ?>
+                    <tr>
+                        <td><strong><?php echo esc_html__('Проблемы сайта', 'site-kit-for-yandex'); ?></strong></td>
+                        <td><?php echo esc_html__('Проблем не найдено.', 'site-kit-for-yandex'); ?></td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+        <?php
 
     }
+
+    /**
+     * Get popular search queries for host.
+     *
+     * @param string $orderBy             Sort field. TOTAL_SHOWS or TOTAL_CLICKS.
+     * @param string $queryIndicator      Query indicator (e.g. TOTAL_SHOWS).
+     * @param string $deviceTypeIndicator Device type indicator (e.g. ALL, DESKTOP, MOBILE).
+     * @param string $dateFrom            Interval start date/datetime.
+     * @param string $dateTo              Interval end date/datetime.
+     * @param int    $offset              List offset.
+     * @param int    $limit               Records limit (1-500).
+     *
+     * @return array|\WP_Error
+     */
+    public static function getPopularQueries(
+        $orderBy = 'TOTAL_SHOWS',
+        $queryIndicator = 'TOTAL_SHOWS',
+        $deviceTypeIndicator = '',
+        $dateFrom = '',
+        $dateTo = '',
+        $offset = 0,
+        $limit = 100
+    ) {
+        $query = [
+            'order_by' => $orderBy,
+            'query_indicator' => $queryIndicator,
+            'offset' => max(0, (int) $offset),
+            'limit' => min(500, max(1, (int) $limit)),
+        ];
+
+        if (! empty($deviceTypeIndicator)) {
+            $query['device_type_indicator'] = $deviceTypeIndicator;
+        }
+
+        if (! empty($dateFrom)) {
+            $query['date_from'] = $dateFrom;
+        }
+
+        if (! empty($dateTo)) {
+            $query['date_to'] = $dateTo;
+        }
+
+        return self::apiSite('search-queries/popular?'.http_build_query($query));
+    }
+
+    /**
+     * Get host summary statistics.
+     *
+     * Docs: https://yandex.ru/dev/webmaster/doc/ru/reference/host-id-summary
+     *
+     * @return array|\WP_Error
+     */
+    public static function getSummary()
+    {
+        $data = get_transient('skfy_webmaster_summary_data');
+        if ($data !== false) {
+            return $data;
+        }
+        $data = self::apiSite('summary');
+        if (! is_wp_error($data)) {
+            set_transient('skfy_webmaster_summary_data', $data, HOUR_IN_SECONDS);
+        }
+
+        return $data;
+    }
+
+
+    /**
+     * Get site quality index (SQI).
+     *
+     * @param string $dateFrom Start datetime in API-supported format.
+     * @param string $dateTo   End datetime in API-supported format.
+     *
+     * @return array|\WP_Error
+     */
+    public static function getSqi($dateFrom = '', $dateTo = '')
+    {
+        $sqiValue = get_transient('skfy_webmaster_sqi_value');
+        if ($sqiValue !== false) {
+            return $sqiValue;
+        }
+
+        $query = [];
+
+        if (! empty($dateFrom)) {
+            $query['date_from'] = $dateFrom;
+        } else {
+            // Default to 3 days ago if date_from is not provided
+            $query['date_from'] = date('Y-m-d', strtotime('-3 days'));
+        }
+
+        if (! empty($dateTo)) {
+            $query['date_to'] = $dateTo;
+        }
+
+        $path = 'sqi-history';
+
+        if (! empty($query)) {
+            $path .= '?'.http_build_query($query);
+        }
+
+        $data = self::apiSite($path);
+
+        $lastPoint = end($data['points']);
+        $sqiValue = $lastPoint['value'] ?? null;
+
+        set_transient('skfy_webmaster_sqi_value', $sqiValue, DAY_IN_SECONDS);
+
+        return $sqiValue;
+    }
+
 
     public static function apiSite($path, $method = 'GET', $data = [])
     {
@@ -114,7 +299,7 @@ class YandexWebmaster
         $args = [
             'method' => $method,
             'headers' => [
-                'Authorization' => 'OAuth '.$accessToken,
+                'Authorization' => "OAuth $accessToken",
                 'Content-Type' => 'application/json',
             ],
         ];
@@ -165,16 +350,7 @@ class YandexWebmaster
         ?>
         <div class="wrap">
             <h1><?php echo esc_html__('Yandex Webmaster', 'site-kit-for-yandex'); ?></h1>
-            <p>
-                <?php
-                printf(
-                    '%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>.',
-                    esc_html__('Просмотр информации о сайте в целом:', 'site-kit-for-yandex'),
-                    esc_url('https://webmaster.yandex.ru/'),
-                    esc_html__('webmaster.yandex.ru', 'site-kit-for-yandex')
-                );
-                ?>
-            </p>
+
             <p>
                 <?php
                 printf(
@@ -185,7 +361,22 @@ class YandexWebmaster
                 ?>
             </p>
 
-            <?php do_action('site_kit_for_yandex_webmaster_tools_page_content'); ?>
+            <?php
+
+            // проверить есть ли токен и если нет показать сообщение о том что нужно авторизоваться и получить токен доступа в настройках плагина, а если токен есть, то показать данные Яндекс.Вебмастера (например ИКС и количество страниц в поиске) и ссылку на страницу с этими данными на сайте Яндекс.Вебмастера.
+            $accessToken = skfy()->config()->getAccessToken();
+            if (! $accessToken) {
+                printf(
+                    '<p>%s <a href="%s">%s</a>.</p>',
+                    esc_html__('Для просмотра данных Яндекс.Вебмастера необходимо авторизоваться и получить токен доступа в', 'site-kit-for-yandex'),
+                    esc_url(admin_url('options-general.php?page=site-kit-for-yandex')),
+                    esc_html__('настройках плагина', 'site-kit-for-yandex')
+                );
+            } else {
+                do_action('site_kit_for_yandex_webmaster_tools_page_content');
+            }
+
+            ?>
         </div>
         <?php
     }
