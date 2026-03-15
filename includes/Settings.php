@@ -45,6 +45,11 @@ final class Settings
         return $this->get('client_secret');
     }
 
+    public function getAccessToken()
+    {
+        return $this->get('access_token');
+    }
+
     public static function addSettingsPage()
     {
         add_options_page(
@@ -101,6 +106,14 @@ final class Settings
             self::$pageSlug,
             self::$sectionId
         );
+
+        add_settings_field(
+            'access_token',
+            __('Access Token', 'site-kit-for-yandex'),
+            [self::class, 'renderAccessTokenField'],
+            self::$pageSlug,
+            self::$sectionId
+        );
     }
 
     /**
@@ -148,6 +161,7 @@ final class Settings
             '<input type="text" class="regular-text" name="site_kit_for_yandex_options[client_id]" value="%s" autocomplete="off" />',
             esc_attr($value)
         );
+  
     }
 
     /**
@@ -164,5 +178,37 @@ final class Settings
             '<input type="password" class="regular-text" name="site_kit_for_yandex_options[client_secret]" value="%s" autocomplete="new-password" />',
             esc_attr($value)
         );
+    }
+
+    /**
+     * Render Access Token field.
+     *
+     * @return void
+     */
+    public static function renderAccessTokenField()
+    {
+        $clientId = skfy()->config()->getClientId();
+
+        $options = get_option('site_kit_for_yandex_options', []);
+        $value = isset($options['access_token']) ? $options['access_token'] : '';
+
+        printf(
+            '<input type="password" class="regular-text" name="site_kit_for_yandex_options[access_token]" value="%s" autocomplete="off" />',
+            esc_attr($value)
+        );
+
+        printf(
+            '<p>%s</p>',
+            esc_html__('Чтобы получить токен доступа, сначала введите ClientID и сохраните настройки.', 'site-kit-for-yandex')
+        );
+
+        if (! empty($clientId)) {
+            printf(
+                '<p><a href="%1$s" target="_blank" rel="noopener noreferrer">%2$s</a></p>',
+                esc_url('https://oauth.yandex.ru/authorize?response_type=token&client_id='.$clientId),
+                esc_html__('Получить токен доступа', 'site-kit-for-yandex')
+            );
+        }
+
     }
 }
