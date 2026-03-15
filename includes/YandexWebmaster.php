@@ -112,7 +112,7 @@ class YandexWebmaster
 
         printf(
             '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
-            esc_html__('Для подключения и настройки интеграции используем API Яндекс.Вебмастера.', 'site-kit-for-yandex'),
+            esc_html__('Для интеграции используем API Яндекс.Вебмастера.', 'site-kit-for-yandex'),
             esc_url('https://yandex.ru/dev/webmaster/'),
             esc_html__('Документация API', 'site-kit-for-yandex')
         );
