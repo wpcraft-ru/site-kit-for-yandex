@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace SiteKitForYandex;
 
@@ -102,16 +102,23 @@ class YandexMetrika
 
         printf(
             '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
-            esc_html__('Просмотр метрики осуществляется через сайт', 'site-kit-for-yandex'),
+            esc_html__('Просмотр метрики осуществляется по ссылке: ', 'site-kit-for-yandex'),
             esc_url('https://metrika.yandex.ru/'),
-            esc_html__('Яндекс.Метрика', 'site-kit-for-yandex')
+            "metrika.yandex.ru"
         );
 
         printf(
             '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
-            esc_html__('Для подключения Яндекс.Метрики используйте официальный плагин WordPress.', 'site-kit-for-yandex'),
+            esc_html__('Для подключения Яндекс.Метрики рекомендуем официальный плагин WordPress.', 'site-kit-for-yandex'),
             esc_url('https://ru.wordpress.org/plugins/wp-yandex-metrika/'),
             esc_html__('WP Yandex Metrika', 'site-kit-for-yandex')
+        );
+
+        printf(
+            '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>.</p>',
+            esc_html__('Для получения данных метрики используйте официальный API Яндекса.', 'site-kit-for-yandex'),
+            esc_url('https://yandex.ru/dev/metrika/ru/'),
+            esc_html__('API Яндекс.Метрика', 'site-kit-for-yandex')
         );
     }
 
