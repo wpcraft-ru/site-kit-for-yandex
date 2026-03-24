@@ -63,6 +63,10 @@ final class SiteKitForYandex
             require_once $file;
         }
 
+        foreach (glob(self::$instance->dir.'includes/Tools/*.php') as $file) {
+            require_once $file;
+        }
+
 
         add_filter('plugin_action_links_'.plugin_basename(__FILE__), [self::instance(), 'plugin_action_links']);
         
