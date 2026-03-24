@@ -99,6 +99,11 @@ class YandexMetrika
     public static function renderSectionText()
     {
         printf(
+            '<p>%s</p>',
+            esc_html__('Яндекс Метрика — это бесплатный инструмент веб‑аналитики, который собирает данные о посещаемости сайта и поведении пользователей, чтобы владельцы ресурсов могли оценить эффективность рекламы, улучшить юзабилити и повысить конверсию.', 'site-kit-for-yandex')
+        );
+
+        printf(
             '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
             esc_html__('Просмотр метрики осуществляется по ссылке: ', 'site-kit-for-yandex'),
             esc_url('https://metrika.yandex.ru/'),

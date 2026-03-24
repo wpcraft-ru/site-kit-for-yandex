@@ -168,6 +168,11 @@ class YandexWebmaster
             function () {
 
                 printf(
+                    '<p>%s</p>',
+                    esc_html__('Яндекс Вебмастер (Yandex Webmaster) — это бесплатный сервис для веб‑мастеров и владельцев сайтов, который помогает отслеживать состояние ресурса в поисковой выдаче Яндекса, анализировать его индексацию, выявлять технические ошибки и улучшать позиции в поиске.', 'site-kit-for-yandex')
+                );
+
+                printf(
                     '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
                     esc_html__('Подключение сайта и просмотр данных Яндекс.Вебмастера осуществляется через сайт', 'site-kit-for-yandex'),
                     esc_url('https://webmaster.yandex.ru/sites/'),

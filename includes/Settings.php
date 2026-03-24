@@ -61,7 +61,8 @@ final class Settings
                 ?>
             <div class="wrap">
                 <h1>Site Kit for Yandex</h1>
-                <p>Configure your Yandex services integration here.</p>
+                <p>Интегрируйте сайт с сервисами Яндекса (Метрика, Вебмастер и др.) и управляйте ими из админ‑панели WordPress — аналогично Site Kit by Google.</p>
+                <?= self::renderActionsToSettingsPage(); ?>
                 <?php do_action('site_kit_for_yandex_before_settings_form'); ?>
                 <form method="post" action="options.php">
                     <?php
@@ -76,6 +77,34 @@ final class Settings
         );
 
         register_setting('site_kit_for_yandex_options', 'site_kit_for_yandex_options');
+    }
+
+    //renderActionsToSettingsPage
+    public static function renderActionsToSettingsPage()
+    {
+        $links = [
+            [
+                'url' => "https://wpcraft.ru/wordpress/plugins/site-kit-for-yandex",
+                'text' => __('О плагине', 'site-kit-for-yandex'),
+                'external' => true,
+            ],
+            [
+                'url' => 'https://wpcraft.ru/contacts',
+                'text' => __('Предложения и поддержка', 'site-kit-for-yandex'),
+                'external' => true,
+            ],
+        ];
+        ob_start();
+        ?>
+        <div style="margin-bottom: 20px;">
+            <?php foreach ($links as $link) : ?>
+                <a href="<?= esc_url($link['url']); ?>" class="button" style="margin-right: 10px;" <?= isset($link['external']) ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>>
+                    <?= esc_html($link['text']); ?>
+                </a>
+            <?php endforeach; ?>
+        </div>
+        <?php
+        return ob_get_clean();
     }
 
     /**
