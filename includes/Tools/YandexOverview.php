@@ -1,10 +1,11 @@
-<?php 
+<?php
 
 namespace SiteKitForYandex;
 
 YandexOverview::init();
 
-class YandexOverview {
+class YandexOverview
+{
 
     private static $metrikaCounterId = null;
 
@@ -337,7 +338,7 @@ class YandexOverview {
         $searchablePagesCount = isset($data['searchable_pages_count']) ? (int) $data['searchable_pages_count'] : null;
         $siteProblems = isset($data['site_problems']) && is_array($data['site_problems']) ? $data['site_problems'] : [];
         ?>
-  
+
         <table class="widefat striped" style="max-width: 720px;">
             <tbody>
                 <tr>
@@ -464,24 +465,6 @@ class YandexOverview {
         return $sqiValue;
     }
 
-    public static function webmasterApiSite($path, $method = 'GET', $data = [])
-    {
-        $siteInfo = self::getSiteInfo();
-        if (! $siteInfo || ! isset($siteInfo['user_id'], $siteInfo['host']['host_id'])) {
-            return new \WP_Error('no_site_info', __('Site information is not available.', 'site-kit-for-yandex'));
-        }
-
-        $userId = $siteInfo['user_id'];
-        $hostId = $siteInfo['host']['host_id'];
-        $apiPath = 'user/'.$userId.'/hosts/'.$hostId;
-
-        if (! empty($path)) {
-            $apiPath .= '/'.ltrim($path, '/');
-        }
-
-        return self::webmasterApi($apiPath, $method, $data);
-    }
-
     public static function getSiteInfo()
     {
         $data = get_transient('skfy_webmaster_site_info');
@@ -518,6 +501,25 @@ class YandexOverview {
 
         return $data;
     }
+
+    public static function webmasterApiSite($path, $method = 'GET', $data = [])
+    {
+        $siteInfo = self::getSiteInfo();
+        if (! $siteInfo || ! isset($siteInfo['user_id'], $siteInfo['host']['host_id'])) {
+            return new \WP_Error('no_site_info', __('Site information is not available.', 'site-kit-for-yandex'));
+        }
+
+        $userId = $siteInfo['user_id'];
+        $hostId = $siteInfo['host']['host_id'];
+        $apiPath = 'user/'.$userId.'/hosts/'.$hostId;
+
+        if (! empty($path)) {
+            $apiPath .= '/'.ltrim($path, '/');
+        }
+
+        return self::webmasterApi($apiPath, $method, $data);
+    }
+
 
     public static function webmasterApi($path, $method = 'GET', $data = [])
     {
