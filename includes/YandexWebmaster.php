@@ -61,19 +61,97 @@ class YandexWebmaster
         return YandexOverview::getSqi($dateFrom, $dateTo);
     }
 
-    public static function apiSite($path, $method = 'GET', $data = [])
-    {
-        return YandexOverview::webmasterApiSite($path, $method, $data);
-    }
 
     public static function getSiteInfo()
     {
-        return YandexOverview::getSiteInfo();
+        $data = get_transient('skfy_webmaster_site_info');
+        if ($data !== false) {
+            return $data;
+        }
+
+        $userId = self::api('user')['user_id'] ?? null;
+        if (! $userId) {
+            return null;
+        }
+
+        $hosts = self::api('user/'.$userId.'/hosts')['hosts'] ?? [];
+        $host = null;
+        foreach ($hosts as $host) {
+            $baseUrlFromAPI = $host['unicode_host_url'] ?? null;
+            $baseUrlFromWP = site_url();
+            if ($baseUrlFromAPI) {
+                if (rtrim($baseUrlFromAPI, '/') === rtrim($baseUrlFromWP, '/')) {
+                    break;
+                }
+            }
+        }
+        if (! $host) {
+            return null;
+        }
+
+        $data = [
+            'user_id' => $userId,
+            'host' => $host,
+        ];
+
+        set_transient('skfy_webmaster_site_info', $data, HOUR_IN_SECONDS);
+
+        return $data;
+    }
+
+    public static function apiSite($path, $method = 'GET', $data = [])
+    {
+        $siteInfo = self::getSiteInfo();
+        if (! $siteInfo || ! isset($siteInfo['user_id'], $siteInfo['host']['host_id'])) {
+            return new \WP_Error('no_site_info', __('Site information is not available.', 'site-kit-for-yandex'));
+        }
+
+        $userId = $siteInfo['user_id'];
+        $hostId = $siteInfo['host']['host_id'];
+        $apiPath = 'user/'.$userId.'/hosts/'.$hostId;
+
+        if (! empty($path)) {
+            $apiPath .= '/'.ltrim($path, '/');
+        }
+
+        return self::api($apiPath, $method, $data);
     }
 
     public static function api($path, $method = 'GET', $data = [])
     {
-        return YandexOverview::webmasterApi($path, $method, $data);
+        $accessToken = skfy()->config()->getAccessToken();
+        if (! $accessToken) {
+            return new \WP_Error('no_access_token', __('Access token is not set.', 'site-kit-for-yandex'));
+        }
+
+        $url = 'https://api.webmaster.yandex.net/v4/'.ltrim($path, '/');
+
+        $args = [
+            'method' => $method,
+            'headers' => [
+                'Authorization' => "OAuth $accessToken",
+                'Content-Type' => 'application/json',
+            ],
+        ];
+
+        if (! empty($data)) {
+            $args['body'] = json_encode($data);
+        }
+
+        $response = wp_remote_request($url, $args);
+
+        if (is_wp_error($response)) {
+            return $response;
+        }
+
+        $code = wp_remote_retrieve_response_code($response);
+        $body = wp_remote_retrieve_body($response);
+
+        if ($code >= 200 && $code < 300) {
+            return json_decode($body, true);
+        }
+
+        return new \WP_Error('api_error', sprintf(__('API request failed with status code %d: %s', 'site-kit-for-yandex'), $code, $body));
     }
 
     /**
