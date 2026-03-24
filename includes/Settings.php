@@ -62,6 +62,7 @@ final class Settings
             <div class="wrap">
                 <h1>Site Kit for Yandex</h1>
                 <p>Configure your Yandex services integration here.</p>
+                <?php do_action('site_kit_for_yandex_before_settings_form'); ?>
                 <form method="post" action="options.php">
                     <?php
                         settings_fields('site_kit_for_yandex_options');

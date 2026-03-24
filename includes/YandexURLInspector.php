@@ -10,9 +10,22 @@ class YandexURLInspector
     public static function init()
     {
         add_action('admin_menu', [self::class, 'addMenu'], 20);
+
+        //renderActionsForSettingsForm
+        add_action('site_kit_for_yandex_before_settings_form', [self::class, 'renderActionsForSettingsForm']);
     }
 
-    // addMenu
+
+    public static function renderActionsForSettingsForm()
+    {
+        printf(
+            '<p>%1$s <a href="%2$s">%3$s</a>.</p>',
+            esc_html__('Проверить URL на наличие в индексе Яндекса можно на странице', 'site-kit-for-yandex'),
+            esc_url(admin_url('tools.php?page=skfy-url-inspector')),
+            esc_html__('Yandex: URL Inspector', 'site-kit-for-yandex')
+        );
+    }
+
     public static function addMenu()
     {
         add_submenu_page(

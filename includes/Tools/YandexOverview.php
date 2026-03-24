@@ -12,8 +12,19 @@ class YandexOverview
     public static function init()
     {
         add_action('admin_menu', [self::class, 'addMenu'], 20);
+        add_action('site_kit_for_yandex_before_settings_form', [self::class, 'renderActionsForSettingsForm']);
 
         self::$metrikaCounterId = skfy()->config()->get('metrika_counter_id');
+    }
+
+    public static function renderActionsForSettingsForm()
+    {
+        printf(
+            '<p>%1$s <a href="%2$s">%3$s</a>.</p>',
+            esc_html__('Сводка по сайту доступна на странице', 'site-kit-for-yandex'),
+            esc_url(admin_url('tools.php?page=skfy-overview')),
+            esc_html__('Yandex Overview', 'site-kit-for-yandex')
+        );
     }
 
     // addMenu

@@ -21,6 +21,7 @@ class YandexMetrika
         add_action('admin_init', [self::class, 'registerSettingsSection']);
     }
 
+
     public static function renderTop10KeyPhraseForLast28Days()
     {
         YandexOverview::renderTop10KeyPhraseForLast28Days();
@@ -97,13 +98,6 @@ class YandexMetrika
      */
     public static function renderSectionText()
     {
-        printf(
-            '<p>%1$s <a href="%2$s">%3$s</a>.</p>',
-            esc_html__('Сводка по метрике доступна на странице', 'site-kit-for-yandex'),
-            esc_url(admin_url('tools.php?page=skfy-overview')),
-            esc_html__('Yandex Overview', 'site-kit-for-yandex')
-        );
-
         printf(
             '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
             esc_html__('Просмотр метрики осуществляется по ссылке: ', 'site-kit-for-yandex'),
