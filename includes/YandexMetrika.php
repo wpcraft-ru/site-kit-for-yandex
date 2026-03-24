@@ -73,14 +73,12 @@ class YandexMetrika
             return $cachedData;
         }
 
-        $counterId = skfy()->config()->get('metrika_counter_id');
-
-        if (empty($counterId)) {
+            if (empty(self::$counterId)) {
             return new \WP_Error('no_counter_id', __('Metrika counter ID is not set.', 'site-kit-for-yandex'));
         }
 
         $query = [
-            'id' => (string) $counterId,
+            'id' => (string) self::$counterId,
             'dimensions' => 'ym:s:searchPhrase',
             'metrics' => 'ym:s:visits',
             'sort' => '-ym:s:visits',
@@ -160,15 +158,12 @@ class YandexMetrika
             return $cachedData;
         }
 
-        $counterId = skfy()->config()->get('metrika_counter_id');
-
-        if (empty($counterId)) {
+        if (empty(self::$counterId)) {
             return new \WP_Error('no_counter_id', __('Metrika counter ID is not set.', 'site-kit-for-yandex'));
         }
 
-
         $query = [
-            'id' => (string) $counterId,
+            'id' => (string) self::$counterId,
             'dimensions' => 'ym:s:startURL',
             'metrics' => 'ym:s:visits',
             'sort' => '-ym:s:visits',
