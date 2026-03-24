@@ -17,10 +17,6 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-// use SiteKitForYandex;
-/**
- * Main plugin singleton.
- */
 final class SiteKitForYandex
 {
     /**
