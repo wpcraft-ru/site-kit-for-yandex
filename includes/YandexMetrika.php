@@ -16,20 +16,105 @@ class YandexMetrika
      */
     private static $pageSlug = 'site-kit-for-yandex';
 
+    private static $counterId = null;
+
     public static function init()
     {
         add_action('admin_init', [self::class, 'registerSettingsSection']);
         add_action('admin_menu', [self::class, 'addToolsPage']);
 
-        //site_kit_for_yandex_after_tools_page
-        add_action('site_kit_for_yandex_after_tools_page', [self::class, 'renderTop10PagesForLast28Days']);
+        self::$counterId = skfy()->config()->get('metrika_counter_id');
+        if (empty(self::$counterId)) {
+            add_action('site_kit_for_yandex_after_tools_page', function () {
+                printf('<p>%s</p>', esc_html__('ID счётчика Яндекс.Метрики не установлен. Пожалуйста, укажите его в настройках плагина.', 'site-kit-for-yandex'));
+            });
+        } else {
+            add_action('site_kit_for_yandex_after_tools_page', [self::class, 'renderTop10PagesForLast28Days']);
+            add_action('site_kit_for_yandex_after_tools_page', [self::class, 'renderTop10KeyPhraseForLast28Days']);
+        }
+
     }
 
-    //renderTop10PagesForLast28Days
+    public static function renderTop10KeyPhraseForLast28Days()
+    {
+        printf('<h2>%s</h2>', esc_html__('Топ 10 ключевых фраз за последние 28 дней', 'site-kit-for-yandex'));
+
+        $items = self::getTop10KeyPhraseForLast28Days();
+
+        if (is_wp_error($items)) {
+            echo '<p>'.esc_html__('Ошибка получения данных метрики: ', 'site-kit-for-yandex').esc_html($items->get_error_message()).'</p>';
+            return;
+        }
+
+        ?>
+        <table class="widefat fixed striped">
+            <thead>
+                <tr>
+                    <th><?php echo esc_html__('Search phrase', 'site-kit-for-yandex'); ?></th>
+                    <th><?php echo esc_html__('Visits', 'site-kit-for-yandex'); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($items as $item) : ?>
+                    <tr>
+                        <td><?php echo esc_html($item['phrase']); ?></td>
+                        <td><?php echo esc_html($item['visits']); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+        <?php
+    }
+
+    public static function getTop10KeyPhraseForLast28Days()
+    {
+        $cachedData = get_transient('skfy_metrika_top_10_keyphrase_28_days');
+        if (! empty($cachedData)) {
+            return $cachedData;
+        }
+
+        $counterId = skfy()->config()->get('metrika_counter_id');
+
+        if (empty($counterId)) {
+            return new \WP_Error('no_counter_id', __('Metrika counter ID is not set.', 'site-kit-for-yandex'));
+        }
+
+        $query = [
+            'id' => (string) $counterId,
+            'dimensions' => 'ym:s:searchPhrase',
+            'metrics' => 'ym:s:visits',
+            'sort' => '-ym:s:visits',
+            'limit' => 10,
+            'date1' => '28daysAgo',
+            'date2' => 'today',
+        ];
+
+        $data = self::api('stat/v1/data?'.http_build_query($query));
+        if (is_wp_error($data)) {
+            return $data;
+        }
+
+        if (empty($data['data']) || ! is_array($data['data'])) {
+            return [];
+        }
+
+        $preparedData = [];
+        foreach ($data['data'] as $item) {
+            $preparedData[] = [
+                'phrase' => isset($item['dimensions'][0]['name']) ? $item['dimensions'][0]['name'] : '',
+                'visits' => isset($item['metrics'][0]) ? $item['metrics'][0] : 0,
+            ];
+        }
+
+        set_transient('skfy_metrika_top_10_keyphrase_28_days', $preparedData, HOUR_IN_SECONDS);
+
+        return $preparedData;
+    }
+
+
     public static function renderTop10PagesForLast28Days()
     {
         echo '<h2>'.esc_html__('Топ 10 страниц за последние 28 дней', 'site-kit-for-yandex').'</h2>';
-        echo '<p>'.esc_html__('Данные метрики недоступны. Для получения данных используйте официальный API Яндекса.', 'site-kit-for-yandex').'</p>';
 
 
         $items = self::getTop10PagesForLast28Days();
@@ -76,9 +161,6 @@ class YandexMetrika
         }
 
         $counterId = skfy()->config()->get('metrika_counter_id');
-        if (empty($counterId)) {
-            $counterId = skfy()->config()->get('counter_id');
-        }
 
         if (empty($counterId)) {
             return new \WP_Error('no_counter_id', __('Metrika counter ID is not set.', 'site-kit-for-yandex'));
@@ -146,6 +228,7 @@ class YandexMetrika
                 'Authorization' => "OAuth $accessToken",
                 'Content-Type' => 'application/json',
             ],
+            "timeout" => 15,
         ];
 
         if (! empty($data)) {
