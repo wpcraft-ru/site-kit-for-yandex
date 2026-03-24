@@ -11,7 +11,6 @@ class YandexURLInspector
     {
         add_action('admin_menu', [self::class, 'addMenu'], 20);
 
-        //renderActionsForSettingsForm
         add_action('site_kit_for_yandex_before_settings_form', [self::class, 'renderActionsForSettingsForm']);
     }
 
@@ -38,7 +37,6 @@ class YandexURLInspector
         );
     }
 
-    // renderPage
     public static function renderPage()
     {
         echo '<div class="wrap">';
