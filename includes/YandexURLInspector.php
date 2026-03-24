@@ -1,17 +1,20 @@
-<?php 
+<?php
 
 namespace SiteKitForYandex;
 
 YandexURLInspector::init();
 
-class YandexURLInspector {
+class YandexURLInspector
+{
 
-    public static function init() {
+    public static function init()
+    {
         add_action('admin_menu', [self::class, 'addMenu'], 20);
     }
 
     // addMenu
-    public static function addMenu() {
+    public static function addMenu()
+    {
         add_submenu_page(
             'tools.php',
             esc_html__('Yandex: URL Inspector', 'site-kit-for-yandex'),
@@ -23,7 +26,8 @@ class YandexURLInspector {
     }
 
     // renderPage
-    public static function renderPage() {
+    public static function renderPage()
+    {
         echo '<div class="wrap">';
         echo '<h1>'.esc_html__('Yandex: URL Inspector', 'site-kit-for-yandex').'</h1>';
 
@@ -39,7 +43,8 @@ class YandexURLInspector {
         echo '</div>';
     }
 
-    private static function renderUrlInputForm() {
+    private static function renderUrlInputForm()
+    {
         $currentUrl = isset($_GET['url']) ? sanitize_text_field(wp_unslash($_GET['url'])) : '';
         ?>
         <form method="get" action="<?php echo esc_url(admin_url('tools.php')); ?>" style="margin: 16px 0 24px;">
@@ -47,22 +52,15 @@ class YandexURLInspector {
             <label for="skfy-url-input" style="display:block; margin-bottom: 8px;">
                 <?php echo esc_html__('Введите URL для анализа', 'site-kit-for-yandex'); ?>
             </label>
-            <input
-                id="skfy-url-input"
-                type="url"
-                name="url"
-                class="regular-text"
-                style="min-width: 420px;"
-                placeholder="https://example.com/page/"
-                value="<?php echo esc_attr($currentUrl); ?>"
-                required
-            />
+            <input id="skfy-url-input" type="url" name="url" class="regular-text" style="min-width: 420px;"
+                placeholder="https://example.com/page/" value="<?php echo esc_attr($currentUrl); ?>" required />
             <?php submit_button(esc_html__('Анализировать URL', 'site-kit-for-yandex'), 'primary', '', false); ?>
         </form>
         <?php
     }
 
-    private static function renderAnalysis($url) {
+    private static function renderAnalysis($url)
+    {
         $url = esc_url_raw($url);
 
         if (! wp_http_validate_url($url)) {
@@ -129,7 +127,8 @@ class YandexURLInspector {
         echo '</table>';
     }
 
-    private static function isInternalUrl($url) {
+    private static function isInternalUrl($url)
+    {
         $siteHost = wp_parse_url(home_url('/'), PHP_URL_HOST);
         $urlHost = wp_parse_url($url, PHP_URL_HOST);
 
