@@ -59,7 +59,8 @@ class YandexURLInspector
 
     private static function renderUrlInputForm()
     {
-        $currentUrl = isset($_GET['url']) ? sanitize_text_field(wp_unslash($_GET['url'])) : '';
+        $defaultUrl = home_url('/');
+        $currentUrl = isset($_GET['url']) ? esc_url_raw(wp_unslash($_GET['url'])) : $defaultUrl;
         ?>
         <form method="get" action="<?php echo esc_url(admin_url('tools.php')); ?>" style="margin: 16px 0 24px;">
             <input type="hidden" name="page" value="skfy-url-inspector" />
@@ -67,7 +68,7 @@ class YandexURLInspector
                 <?php echo esc_html__('Введите URL для анализа', 'site-kit-for-yandex'); ?>
             </label>
             <input id="skfy-url-input" type="url" name="url" class="regular-text" style="min-width: 420px;"
-                placeholder="https://example.com/page/" value="<?php echo esc_attr($currentUrl); ?>" required />
+                placeholder="<?php echo esc_attr($defaultUrl); ?>" value="<?php echo esc_attr($currentUrl); ?>" required />
             <?php submit_button(esc_html__('Анализировать URL', 'site-kit-for-yandex'), 'primary', '', false); ?>
         </form>
         <?php
