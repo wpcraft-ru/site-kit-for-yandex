@@ -9,7 +9,7 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: site-kit-for-yandex
  * Domain Path: /languages
- * Version: 0.1.260324
+ * Version: 0.1.260329
  */
 
 // Exit if accessed directly
