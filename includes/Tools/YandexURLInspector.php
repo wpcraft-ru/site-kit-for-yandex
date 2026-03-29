@@ -15,6 +15,74 @@ class YandexURLInspector
         add_action('admin_menu', [self::class, 'addMenu'], 20);
 
         add_action('site_kit_for_yandex_before_settings_form', [self::class, 'renderActionsForSettingsForm']);
+
+        add_action('site_kit_for_yandex_after_url_input_form_start', [self::class, 'importantPages']);
+    }
+
+    //importantPages
+    public static function importantPages()
+    {
+        // https://yandex.ru/dev/webmaster/doc/ru/reference/host-id-important-urls
+        $data = YandexWebmaster::apiSite('important-urls');
+
+        echo '<h2>' . esc_html__('Yandex Webmaster: Мониторинг важных страниц', 'site-kit-for-yandex') . '</h2>';
+
+        printf(
+            '<p>%1$s <code>%2$s</code></p>',
+            esc_html__('Метод API', 'site-kit-for-yandex'),
+            esc_html('GET /v4/user/{user-id}/hosts/{host-id}/important-urls')
+        );
+
+        if (is_wp_error($data)) {
+            printf('<div class="notice notice-warning inline"><p>%s</p></div>', esc_html($data->get_error_message()));
+            return;
+        }
+
+        $rows = isset($data['urls']) && is_array($data['urls']) ? $data['urls'] : [];
+
+        if (empty($rows)) {
+            echo '<p>' . esc_html__('В мониторинге важных страниц пока нет данных.', 'site-kit-for-yandex') . '</p>';
+            return;
+        }
+        ?>
+        <table class="widefat striped" style="max-width: 900px; margin-bottom: 24px;">
+            <thead>
+                <tr>
+                    <th><?php echo esc_html__('URL', 'site-kit-for-yandex'); ?></th>
+                    <th><?php echo esc_html__('В поиске', 'site-kit-for-yandex'); ?></th>
+                    <th><?php echo esc_html__('Индексирование', 'site-kit-for-yandex'); ?></th>
+                    <th><?php echo esc_html__('HTTP', 'site-kit-for-yandex'); ?></th>
+                    <th><?php echo esc_html__('Дата обновления', 'site-kit-for-yandex'); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($rows as $row) : ?>
+                <?php
+                    $url = isset($row['url']) ? (string) $row['url'] : '';
+                    $indexingStatus = isset($row['indexing_status']['status']) ? (string) $row['indexing_status']['status'] : '—';
+                    $httpCode = isset($row['indexing_status']['http_code']) ? (string) $row['indexing_status']['http_code'] : '—';
+                    $searchable = isset($row['search_status']['searchable'])
+                        ? ($row['search_status']['searchable'] ? esc_html__('Да', 'site-kit-for-yandex') : esc_html__('Нет', 'site-kit-for-yandex'))
+                        : '—';
+                    $updateDate = isset($row['update_date']) ? (string) $row['update_date'] : '—';
+                ?>
+                <tr>
+                    <td>
+                        <?php if ($url !== '') : ?>
+                            <a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html($url); ?></a>
+                        <?php else : ?>
+                            —
+                        <?php endif; ?>
+                    </td>
+                    <td><?php echo esc_html($searchable); ?></td>
+                    <td><code><?php echo esc_html($indexingStatus); ?></code></td>
+                    <td><?php echo esc_html($httpCode); ?></td>
+                    <td><?php echo esc_html($updateDate); ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+        <?php
     }
 
 
@@ -61,7 +129,23 @@ class YandexURLInspector
     {
         $defaultUrl = home_url('/');
         $currentUrl = isset($_GET['url']) ? esc_url_raw(wp_unslash($_GET['url'])) : $defaultUrl;
+
+        //go to settings link
+        printf(
+            '<p>%1$s <a href="%2$s">%3$s</a>.</p>',
+            esc_html__('Для получения данных по URL необходимо подключить и настроить Яндекс.Вебмастер в разделе', 'site-kit-for-yandex'),
+            esc_url(admin_url('options-general.php?page=site-kit-for-yandex')),
+            esc_html__('настройки плагина', 'site-kit-for-yandex')
+        );
+
+         printf(
+            '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>.</p>',
+                esc_html__('Перейти в Яндекс.Вебмастер', 'site-kit-for-yandex'),
+                esc_url('https://webmaster.yandex.ru/sites/'),
+                esc_html__('Яндекс.Вебмастер', 'site-kit-for-yandex')
+        );
         ?>
+
         <form method="get" action="<?php echo esc_url(admin_url('tools.php')); ?>" style="margin: 16px 0 24px;">
             <input type="hidden" name="page" value="skfy-url-inspector" />
             <label for="skfy-url-input" style="display:block; margin-bottom: 8px;">
@@ -72,6 +156,8 @@ class YandexURLInspector
             <?php submit_button(esc_html__('Анализировать URL', 'site-kit-for-yandex'), 'primary', '', false); ?>
         </form>
         <?php
+
+        do_action('site_kit_for_yandex_after_url_input_form_start');
     }
 
     private static function renderAnalysis($url)
