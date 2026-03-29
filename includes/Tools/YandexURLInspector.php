@@ -25,7 +25,7 @@ class YandexURLInspector
         // https://yandex.ru/dev/webmaster/doc/ru/reference/host-id-important-urls
         $data = YandexWebmaster::apiSite('important-urls');
 
-        echo '<h2>' . esc_html__('Yandex Webmaster: Мониторинг важных страниц', 'site-kit-for-yandex') . '</h2>';
+        echo '<h2>'.esc_html__('Yandex Webmaster: Мониторинг важных страниц', 'site-kit-for-yandex').'</h2>';
 
         printf(
             '<p>%1$s <code>%2$s</code></p>',
@@ -41,7 +41,7 @@ class YandexURLInspector
         $rows = isset($data['urls']) && is_array($data['urls']) ? $data['urls'] : [];
 
         if (empty($rows)) {
-            echo '<p>' . esc_html__('В мониторинге важных страниц пока нет данных.', 'site-kit-for-yandex') . '</p>';
+            echo '<p>'.esc_html__('В мониторинге важных страниц пока нет данных.', 'site-kit-for-yandex').'</p>';
             return;
         }
         ?>
@@ -57,7 +57,7 @@ class YandexURLInspector
             </thead>
             <tbody>
                 <?php foreach ($rows as $row) : ?>
-                <?php
+                    <?php
                     $url = isset($row['url']) ? (string) $row['url'] : '';
                     $indexingStatus = isset($row['indexing_status']['status']) ? (string) $row['indexing_status']['status'] : '—';
                     $httpCode = isset($row['indexing_status']['http_code']) ? (string) $row['indexing_status']['http_code'] : '—';
@@ -65,20 +65,21 @@ class YandexURLInspector
                         ? ($row['search_status']['searchable'] ? esc_html__('Да', 'site-kit-for-yandex') : esc_html__('Нет', 'site-kit-for-yandex'))
                         : '—';
                     $updateDate = isset($row['update_date']) ? (string) $row['update_date'] : '—';
-                ?>
-                <tr>
-                    <td>
-                        <?php if ($url !== '') : ?>
-                            <a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html($url); ?></a>
-                        <?php else : ?>
-                            —
-                        <?php endif; ?>
-                    </td>
-                    <td><?php echo esc_html($searchable); ?></td>
-                    <td><code><?php echo esc_html($indexingStatus); ?></code></td>
-                    <td><?php echo esc_html($httpCode); ?></td>
-                    <td><?php echo esc_html($updateDate); ?></td>
-                </tr>
+                    ?>
+                    <tr>
+                        <td>
+                            <?php if ($url !== '') : ?>
+                                <a href="<?php echo esc_url($url); ?>" target="_blank"
+                                    rel="noopener noreferrer"><?php echo esc_html($url); ?></a>
+                            <?php else : ?>
+                                —
+                            <?php endif; ?>
+                        </td>
+                        <td><?php echo esc_html($searchable); ?></td>
+                        <td><code><?php echo esc_html($indexingStatus); ?></code></td>
+                        <td><?php echo esc_html($httpCode); ?></td>
+                        <td><?php echo esc_html($updateDate); ?></td>
+                    </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
@@ -129,6 +130,16 @@ class YandexURLInspector
     {
         $defaultUrl = home_url('/');
         $currentUrl = isset($_GET['url']) ? esc_url_raw(wp_unslash($_GET['url'])) : $defaultUrl;
+        $siteScheme = (string) wp_parse_url(home_url('/'), PHP_URL_SCHEME);
+        $siteHost = (string) wp_parse_url(home_url('/'), PHP_URL_HOST);
+        $sitePort = (int) wp_parse_url(home_url('/'), PHP_URL_PORT);
+
+        if (0 === $sitePort) {
+            $sitePort = 'https' === strtolower($siteScheme) ? 443 : 80;
+        }
+
+        $webmasterSiteId = sprintf('%s:%s:%d', $siteScheme, $siteHost, $sitePort);
+        $webmasterTrackerUrl = 'https://webmaster.yandex.ru/site/' . $webmasterSiteId . '/indexing/url-tracker/';
 
         //go to settings link
         printf(
@@ -138,12 +149,20 @@ class YandexURLInspector
             esc_html__('настройки плагина', 'site-kit-for-yandex')
         );
 
-         printf(
+        printf(
             '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>.</p>',
-                esc_html__('Перейти в Яндекс.Вебмастер', 'site-kit-for-yandex'),
-                esc_url('https://webmaster.yandex.ru/sites/'),
-                esc_html__('Яндекс.Вебмастер', 'site-kit-for-yandex')
+            esc_html__('Перейти в Яндекс.Вебмастер', 'site-kit-for-yandex'),
+            esc_url('https://webmaster.yandex.ru/sites/'),
+            esc_html__('Яндекс.Вебмастер', 'site-kit-for-yandex')
         );
+
+        printf(
+            '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>.</p>',
+            esc_html__('Мониторинг важных страниц в Яндекс.Вебмастере', 'site-kit-for-yandex'),
+            esc_url($webmasterTrackerUrl),
+            esc_html__('URL-трекер', 'site-kit-for-yandex')
+        );
+
         ?>
 
         <form method="get" action="<?php echo esc_url(admin_url('tools.php')); ?>" style="margin: 16px 0 24px;">
@@ -241,16 +260,16 @@ class YandexURLInspector
         }
 
         $query = [
-            'id'         => (string) self::$metrikaCounterId,
+            'id' => (string) self::$metrikaCounterId,
             'dimensions' => 'ym:s:trafficSourceName',
-            'metrics'    => 'ym:s:visits,ym:s:users,ym:s:bounceRate,ym:s:avgVisitDurationSeconds,ym:s:pageDepth',
-            'filters'    => "ym:s:startURL=='" . $url . "'",
-            'sort'       => '-ym:s:visits',
-            'date1'      => '28daysAgo',
-            'date2'      => 'today',
+            'metrics' => 'ym:s:visits,ym:s:users,ym:s:bounceRate,ym:s:avgVisitDurationSeconds,ym:s:pageDepth',
+            'filters' => "ym:s:startURL=='".$url."'",
+            'sort' => '-ym:s:visits',
+            'date1' => '28daysAgo',
+            'date2' => 'today',
         ];
 
-        return YandexMetrika::api('stat/v1/data?' . http_build_query($query));
+        return YandexMetrika::api('stat/v1/data?'.http_build_query($query));
     }
 
     public static function getSearchPhrases($url)
@@ -260,33 +279,33 @@ class YandexURLInspector
         }
 
         $query = [
-            'id'         => (string) self::$metrikaCounterId,
+            'id' => (string) self::$metrikaCounterId,
             'dimensions' => 'ym:s:searchPhrase,ym:s:searchEngineName',
-            'metrics'    => 'ym:s:visits,ym:s:users',
-            'filters'    => "ym:s:startURL=='" . $url . "'",
-            'sort'       => '-ym:s:visits',
-            'limit'      => 20,
-            'date1'      => '28daysAgo',
-            'date2'      => 'today',
+            'metrics' => 'ym:s:visits,ym:s:users',
+            'filters' => "ym:s:startURL=='".$url."'",
+            'sort' => '-ym:s:visits',
+            'limit' => 20,
+            'date1' => '28daysAgo',
+            'date2' => 'today',
         ];
 
-        return YandexMetrika::api('stat/v1/data?' . http_build_query($query));
+        return YandexMetrika::api('stat/v1/data?'.http_build_query($query));
     }
 
     public static function getQueryAnalytics($url, $limit = 20)
     {
         $body = [
             'text_indicator' => 'URL',
-            'filters'        => [
+            'filters' => [
                 'text_filters' => [
                     [
                         'text_indicator' => 'URL',
-                        'operation'      => 'TEXT_EQUAL',
-                        'value'          => $url,
+                        'operation' => 'TEXT_EQUAL',
+                        'value' => $url,
                     ],
                 ],
             ],
-            'limit'          => $limit,
+            'limit' => $limit,
         ];
 
         return YandexWebmaster::apiSite('query-analytics/list', 'POST', $body);
@@ -296,7 +315,7 @@ class YandexURLInspector
     {
         $data = self::getTrafficAndSources($url);
 
-        echo '<h2>' . esc_html__('Трафик и источники (за 28 дней)', 'site-kit-for-yandex') . '</h2>';
+        echo '<h2>'.esc_html__('Трафик и источники (за 28 дней)', 'site-kit-for-yandex').'</h2>';
 
         if (is_wp_error($data)) {
             printf('<div class="notice notice-warning inline"><p>%s</p></div>', esc_html($data->get_error_message()));
@@ -307,7 +326,7 @@ class YandexURLInspector
         $totals = isset($data['totals']) && is_array($data['totals']) ? $data['totals'] : [];
 
         if (empty($rows)) {
-            echo '<p>' . esc_html__('Нет данных.', 'site-kit-for-yandex') . '</p>';
+            echo '<p>'.esc_html__('Нет данных.', 'site-kit-for-yandex').'</p>';
             return;
         }
         ?>
@@ -324,20 +343,20 @@ class YandexURLInspector
             </thead>
             <tbody>
                 <?php if (! empty($totals)) : ?>
-                <tr>
-                    <td><strong><?php echo esc_html__('Итого', 'site-kit-for-yandex'); ?></strong></td>
-                    <?php foreach ($totals as $val) : ?>
-                        <td><strong><?php echo esc_html(is_numeric($val) ? round($val, 1) : $val); ?></strong></td>
-                    <?php endforeach; ?>
-                </tr>
+                    <tr>
+                        <td><strong><?php echo esc_html__('Итого', 'site-kit-for-yandex'); ?></strong></td>
+                        <?php foreach ($totals as $val) : ?>
+                            <td><strong><?php echo esc_html(is_numeric($val) ? round($val, 1) : $val); ?></strong></td>
+                        <?php endforeach; ?>
+                    </tr>
                 <?php endif; ?>
                 <?php foreach ($rows as $row) : ?>
-                <tr>
-                    <td><?php echo esc_html(isset($row['dimensions'][0]['name']) ? $row['dimensions'][0]['name'] : '—'); ?></td>
-                    <?php foreach ($row['metrics'] as $val) : ?>
-                        <td><?php echo esc_html(is_numeric($val) ? round($val, 1) : $val); ?></td>
-                    <?php endforeach; ?>
-                </tr>
+                    <tr>
+                        <td><?php echo esc_html(isset($row['dimensions'][0]['name']) ? $row['dimensions'][0]['name'] : '—'); ?></td>
+                        <?php foreach ($row['metrics'] as $val) : ?>
+                            <td><?php echo esc_html(is_numeric($val) ? round($val, 1) : $val); ?></td>
+                        <?php endforeach; ?>
+                    </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
@@ -348,7 +367,7 @@ class YandexURLInspector
     {
         $data = self::getSearchPhrases($url);
 
-        echo '<h2>' . esc_html__('Поисковые запросы (за 28 дней)', 'site-kit-for-yandex') . '</h2>';
+        echo '<h2>'.esc_html__('Поисковые запросы (за 28 дней)', 'site-kit-for-yandex').'</h2>';
 
         if (is_wp_error($data)) {
             printf('<div class="notice notice-warning inline"><p>%s</p></div>', esc_html($data->get_error_message()));
@@ -358,7 +377,7 @@ class YandexURLInspector
         $rows = isset($data['data']) && is_array($data['data']) ? $data['data'] : [];
 
         if (empty($rows)) {
-            echo '<p>' . esc_html__('Нет данных.', 'site-kit-for-yandex') . '</p>';
+            echo '<p>'.esc_html__('Нет данных.', 'site-kit-for-yandex').'</p>';
             return;
         }
         ?>
@@ -373,12 +392,13 @@ class YandexURLInspector
             </thead>
             <tbody>
                 <?php foreach ($rows as $row) : ?>
-                <tr>
-                    <td><?php echo esc_html(isset($row['dimensions'][0]['name']) ? $row['dimensions'][0]['name'] : esc_html__('(не определено)', 'site-kit-for-yandex')); ?></td>
-                    <td><?php echo esc_html(isset($row['dimensions'][1]['name']) ? $row['dimensions'][1]['name'] : '—'); ?></td>
-                    <td><?php echo esc_html(isset($row['metrics'][0]) ? $row['metrics'][0] : 0); ?></td>
-                    <td><?php echo esc_html(isset($row['metrics'][1]) ? $row['metrics'][1] : 0); ?></td>
-                </tr>
+                    <tr>
+                        <td><?php echo esc_html(isset($row['dimensions'][0]['name']) ? $row['dimensions'][0]['name'] : esc_html__('(не определено)', 'site-kit-for-yandex')); ?>
+                        </td>
+                        <td><?php echo esc_html(isset($row['dimensions'][1]['name']) ? $row['dimensions'][1]['name'] : '—'); ?></td>
+                        <td><?php echo esc_html(isset($row['metrics'][0]) ? $row['metrics'][0] : 0); ?></td>
+                        <td><?php echo esc_html(isset($row['metrics'][1]) ? $row['metrics'][1] : 0); ?></td>
+                    </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
@@ -389,7 +409,7 @@ class YandexURLInspector
     {
         $data = self::getQueryAnalytics($url);
 
-        echo '<h2>' . esc_html__('Поисковые запросы из Вебмастера', 'site-kit-for-yandex') . '</h2>';
+        echo '<h2>'.esc_html__('Поисковые запросы из Вебмастера', 'site-kit-for-yandex').'</h2>';
 
         if (is_wp_error($data)) {
             printf('<div><p>%s</p></div>', esc_html($data->get_error_message()));
@@ -401,7 +421,7 @@ class YandexURLInspector
             : [];
 
         if (empty($queries)) {
-            echo '<p>' . esc_html__('Нет данных.', 'site-kit-for-yandex') . '</p>';
+            echo '<p>'.esc_html__('Нет данных.', 'site-kit-for-yandex').'</p>';
             return;
         }
         ?>
@@ -417,32 +437,32 @@ class YandexURLInspector
             </thead>
             <tbody>
                 <?php foreach ($queries as $item) : ?>
-                <?php
-                    $query   = isset($item['text_indicator']['value']) ? $item['text_indicator']['value'] : '—';
-                    $stats   = isset($item['statistics']) && is_array($item['statistics']) ? $item['statistics'] : [];
+                    <?php
+                    $query = isset($item['text_indicator']['value']) ? $item['text_indicator']['value'] : '—';
+                    $stats = isset($item['statistics']) && is_array($item['statistics']) ? $item['statistics'] : [];
                     $statMap = [];
                     foreach ($stats as $stat) {
                         $statMap[$stat['field']] = $stat['value'];
                     }
-                    $shows    = isset($statMap['SHOWS']) ? (int) $statMap['SHOWS'] : 0;
-                    $clicks   = isset($statMap['CLICKS']) ? (int) $statMap['CLICKS'] : 0;
-                    $ctr      = isset($statMap['CTR']) ? round((float) $statMap['CTR'] * 100, 2) : 0;
+                    $shows = isset($statMap['SHOWS']) ? (int) $statMap['SHOWS'] : 0;
+                    $clicks = isset($statMap['CLICKS']) ? (int) $statMap['CLICKS'] : 0;
+                    $ctr = isset($statMap['CTR']) ? round((float) $statMap['CTR'] * 100, 2) : 0;
                     $position = isset($statMap['AVERAGE_SHOW_POSITION']) ? round((float) $statMap['AVERAGE_SHOW_POSITION'], 1) : '—';
-                ?>
-                <tr>
-                    <td><?php echo esc_html($query); ?></td>
-                    <td><?php echo esc_html($shows); ?></td>
-                    <td><?php echo esc_html($clicks); ?></td>
-                    <td><?php echo esc_html($ctr); ?></td>
-                    <td><?php echo esc_html($position); ?></td>
-                </tr>
+                    ?>
+                    <tr>
+                        <td><?php echo esc_html($query); ?></td>
+                        <td><?php echo esc_html($shows); ?></td>
+                        <td><?php echo esc_html($clicks); ?></td>
+                        <td><?php echo esc_html($ctr); ?></td>
+                        <td><?php echo esc_html($position); ?></td>
+                    </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
         <?php
     }
 
-   
+
 
     private static function isInternalUrl($url)
     {
