@@ -5,6 +5,7 @@ namespace SiteKitForYandex;
 if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
+
 DashboardWidget::init();
 
 class DashboardWidget
