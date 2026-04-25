@@ -9,9 +9,21 @@ class YandexURLInspector
 
     private static $metrikaCounterId = null;
 
+    private static $siteScheme = '';
+    private static $siteHost = '';
+    private static $sitePort = 80;
+
     public static function init()
     {
         self::$metrikaCounterId = skfy()->config()->get('metrika_counter_id');
+
+        $homeUrl = home_url('/');
+        self::$siteScheme = (string) wp_parse_url($homeUrl, PHP_URL_SCHEME);
+        self::$siteHost   = (string) wp_parse_url($homeUrl, PHP_URL_HOST);
+        self::$sitePort   = (int) wp_parse_url($homeUrl, PHP_URL_PORT);
+        if (0 === self::$sitePort) {
+            self::$sitePort = 'https' === strtolower(self::$siteScheme) ? 443 : 80;
+        }
         add_action('admin_menu', [self::class, 'addMenu'], 20);
 
         add_action('site_kit_for_yandex_before_settings_form', [self::class, 'renderActionsForSettingsForm']);
@@ -26,9 +38,18 @@ class YandexURLInspector
         $data = YandexWebmaster::apiSite('important-urls');
 
         echo '<h2>'.esc_html__('Yandex Webmaster: Мониторинг важных страниц', 'site-kit-for-yandex').'</h2>';
+        $webmasterSiteId = sprintf('%s:%s:%d', self::$siteScheme, self::$siteHost, self::$sitePort);
+        $webmasterTrackerUrl = 'https://webmaster.yandex.ru/site/'.$webmasterSiteId.'/indexing/url-tracker/';
 
         printf(
-            '<p>%1$s <code>%2$s</code></p>',
+            '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>.</p>',
+            esc_html__('Мониторинг важных страниц в Яндекс.Вебмастере', 'site-kit-for-yandex'),
+            esc_url($webmasterTrackerUrl),
+            esc_html__('URL-трекер', 'site-kit-for-yandex')
+        );
+
+        printf(
+            '<details><summary>%1$s</summary><p><code>%2$s</code></p></details>',
             esc_html__('Метод API', 'site-kit-for-yandex'),
             esc_html('GET /v4/user/{user-id}/hosts/{host-id}/important-urls')
         );
@@ -69,8 +90,7 @@ class YandexURLInspector
                     <tr>
                         <td>
                             <?php if ($url !== '') : ?>
-                                <a href="<?php echo esc_url($url); ?>" target="_blank"
-                                    rel="noopener noreferrer"><?php echo esc_html($url); ?></a>
+                                <a href="<?php echo esc_url(admin_url('tools.php?page=skfy-url-inspector&url=' . rawurlencode($url))); ?>"><?php echo esc_html($url); ?></a>
                             <?php else : ?>
                                 —
                             <?php endif; ?>
@@ -142,16 +162,15 @@ class YandexURLInspector
         $defaultUrl = home_url('/');
         $url = self::getUrl();
         $currentUrl = '' !== $url ? esc_url_raw($url) : $defaultUrl;
-        $siteScheme = (string) wp_parse_url(home_url('/'), PHP_URL_SCHEME);
-        $siteHost = (string) wp_parse_url(home_url('/'), PHP_URL_HOST);
-        $sitePort = (int) wp_parse_url(home_url('/'), PHP_URL_PORT);
-
-        if (0 === $sitePort) {
-            $sitePort = 'https' === strtolower($siteScheme) ? 443 : 80;
+        
+        if(!empty($url)){
+            //return to main page
+            printf(
+                '<p><a href="%s">%s</a></p>',
+                esc_url(admin_url('tools.php?page=skfy-url-inspector')),
+                esc_html__('← Вернуться к вводу URL', 'site-kit-for-yandex')
+            );
         }
-
-        $webmasterSiteId = sprintf('%s:%s:%d', $siteScheme, $siteHost, $sitePort);
-        $webmasterTrackerUrl = 'https://webmaster.yandex.ru/site/' . $webmasterSiteId . '/indexing/url-tracker/';
 
         //go to settings link
         printf(
@@ -168,12 +187,6 @@ class YandexURLInspector
             esc_html__('Яндекс.Вебмастер', 'site-kit-for-yandex')
         );
 
-        printf(
-            '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>.</p>',
-            esc_html__('Мониторинг важных страниц в Яндекс.Вебмастере', 'site-kit-for-yandex'),
-            esc_url($webmasterTrackerUrl),
-            esc_html__('URL-трекер', 'site-kit-for-yandex')
-        );
 
         ?>
 
@@ -263,7 +276,7 @@ class YandexURLInspector
         if ($isInternal) {
             // self::renderQueryAnalytics($url);
             self::renderTrafficAndSources($url);
-            self::renderSearchPhrases($url);
+            // self::renderSearchPhrases($url);
         }
     }
 
@@ -377,6 +390,11 @@ class YandexURLInspector
         <?php
     }
 
+    /**
+     * Renders a table of search phrases users arrived from to the given URL.
+     * 
+     * @todo not ready yet — need to figure out how to retrieve this data via REST API
+     */
     private static function renderSearchPhrases($url)
     {
         $data = self::getSearchPhrases($url);
