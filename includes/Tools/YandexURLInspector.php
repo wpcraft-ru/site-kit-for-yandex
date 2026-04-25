@@ -116,8 +116,7 @@ class YandexURLInspector
 
         self::renderUrlInputForm();
 
-        $rawUrl = isset($_GET['url']) ? wp_unslash($_GET['url']) : '';
-        $url = is_string($rawUrl) ? trim($rawUrl) : '';
+        $url = self::getUrl();
 
         if ($url !== '') {
             self::renderAnalysis($url);
@@ -126,10 +125,23 @@ class YandexURLInspector
         echo '</div>';
     }
 
+    /**
+     * Получает и обрабатывает URL из параметра $_GET.
+     *
+     * @since 1.0.0
+     * @return string Обработанный URL или пустая строка.
+     */
+    private static function getUrl()
+    {
+        $rawUrl = isset($_GET['url']) ? $_GET['url'] : '';
+        return is_string($rawUrl) ? trim($rawUrl) : '';
+    }
+
     private static function renderUrlInputForm()
     {
         $defaultUrl = home_url('/');
-        $currentUrl = isset($_GET['url']) ? esc_url_raw(wp_unslash($_GET['url'])) : $defaultUrl;
+        $url = self::getUrl();
+        $currentUrl = '' !== $url ? esc_url_raw($url) : $defaultUrl;
         $siteScheme = (string) wp_parse_url(home_url('/'), PHP_URL_SCHEME);
         $siteHost = (string) wp_parse_url(home_url('/'), PHP_URL_HOST);
         $sitePort = (int) wp_parse_url(home_url('/'), PHP_URL_PORT);
@@ -176,7 +188,9 @@ class YandexURLInspector
         </form>
         <?php
 
-        do_action('site_kit_for_yandex_after_url_input_form_start');
+        if ('' === $url) {
+            do_action('site_kit_for_yandex_after_url_input_form_start');
+        }
     }
 
     private static function renderAnalysis($url)
