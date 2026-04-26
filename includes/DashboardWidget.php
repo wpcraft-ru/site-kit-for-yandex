@@ -31,7 +31,7 @@ class DashboardWidget
 
         wp_add_dashboard_widget(
             'sitekit_for_yandex',           // Widget ID
-            __('Overview from Yandex', 'sitekit-for-yandex'),        // Widget Title
+            __('Summary by Site Kit for Yandex', 'site-kit-for-yandex'),        // Widget Title
             [self::class, 'display_content']     // Callback
         );
     }
@@ -47,16 +47,16 @@ class DashboardWidget
         ?>
         <div class="sitekit-for-yandex-widget-content" id="sitekit-widget-loading">
             <div class="sitekit-for-yandex-widget-stats">
-                <p><?php _e('Loading data...', 'sitekit-for-yandex'); ?></p>
+                <p><?php _e('Loading data...', 'site-kit-for-yandex'); ?></p>
             </div>
 
-            <p style="margin-top: 15px;"><strong><?php _e('Yandex Tools:', 'sitekit-for-yandex'); ?></strong></p>
+            <p style="margin-top: 15px;"><strong><?php _e('Yandex Tools:', 'site-kit-for-yandex'); ?></strong></p>
             <p>
                 <a href="<?php echo esc_url($overview_url); ?>" class="button button-secondary">
-                    <?php _e('Overview', 'sitekit-for-yandex'); ?>
+                    <?php _e('Overview', 'site-kit-for-yandex'); ?>
                 </a>
                 <a href="<?php echo esc_url($inspector_url); ?>" class="button button-secondary" style="margin-left: 8px;">
-                    <?php _e('URL Inspector', 'sitekit-for-yandex'); ?>
+                    <?php _e('URL Inspector', 'site-kit-for-yandex'); ?>
                 </a>
             </p>
         </div>
@@ -114,11 +114,11 @@ class DashboardWidget
         $excluded_pages = isset($data['excluded_pages_count']) ? (int) $data['excluded_pages_count'] : null;
         ?>
         <div>
-            <p style="margin-top: 15px;"><strong><?php _e('Base indicators:', 'sitekit-for-yandex'); ?></strong></p>
+            <p style="margin-top: 15px;"><strong><?php _e('Base indicators:', 'site-kit-for-yandex'); ?></strong></p>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
                 <?php if (null !== $sqi) : ?>
                     <div>
-                        <div style="color: #666; font-size: 12px;">ИКС</div>
+                        <div style="color: #666; font-size: 12px;"><?php _e('SQI', 'site-kit-for-yandex'); ?></div>
                         <div style="font-weight: bold; font-size: 18px; color: #0073aa;">
                             <?php echo esc_html(number_format_i18n($sqi)); ?>
                         </div>
@@ -126,7 +126,7 @@ class DashboardWidget
                 <?php endif; ?>
                 <?php if (null !== $searchable_pages) : ?>
                     <div>
-                        <div style="color: #666; font-size: 12px;"><?php _e('В поиске', 'sitekit-for-yandex'); ?></div>
+                        <div style="color: #666; font-size: 12px;"><?php _e('In Search', 'site-kit-for-yandex'); ?></div>
                         <div style="font-weight: bold; font-size: 18px; color: #0073aa;">
                             <?php echo esc_html(number_format_i18n($searchable_pages)); ?>
                         </div>
@@ -134,7 +134,7 @@ class DashboardWidget
                 <?php endif; ?>
                 <?php if (null !== $excluded_pages) : ?>
                     <div>
-                        <div style="color: #666; font-size: 12px;"><?php _e('Исключено', 'sitekit-for-yandex'); ?></div>
+                        <div style="color: #666; font-size: 12px;"><?php _e('Excluded', 'site-kit-for-yandex'); ?></div>
                         <div style="font-weight: bold; color: #d63638;">
                             <?php echo esc_html(number_format_i18n($excluded_pages)); ?>
                         </div>
@@ -194,23 +194,23 @@ class DashboardWidget
         }
         ?>
         <div>
-            <p style="margin-top: 15px;"><strong><?php _e('Мониторинг важных страниц:', 'sitekit-for-yandex'); ?></strong></p>
+            <p style="margin-top: 15px;"><strong><?php _e('Important Pages Monitoring:', 'site-kit-for-yandex'); ?></strong></p>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
                 <div>
-                    <div style="color: #666; font-size: 11px;"><?php _e('В поиске', 'sitekit-for-yandex'); ?></div>
+                    <div style="color: #666; font-size: 11px;"><?php _e('Indexed', 'site-kit-for-yandex'); ?></div>
                     <div style="font-weight: bold; font-size: 16px; color: #27ae60;">
                         <?php echo esc_html($indexed); ?>
                     </div>
                 </div>
                 <div>
-                    <div style="color: #666; font-size: 11px;"><?php _e('Ошибки', 'sitekit-for-yandex'); ?></div>
+                    <div style="color: #666; font-size: 11px;"><?php _e('Errors', 'site-kit-for-yandex'); ?></div>
                     <div style="font-weight: bold; font-size: 16px; color: #d63638;">
                         <?php echo esc_html($indexing_errors); ?>
                     </div>
                 </div>
                 <div>
-                    <div style="color: #666; font-size: 11px;"><?php _e('Не в поиске', 'sitekit-for-yandex'); ?></div>
+                    <div style="color: #666; font-size: 11px;"><?php _e('Not Searchable', 'site-kit-for-yandex'); ?></div>
                     <div style="font-weight: bold; font-size: 16px; color: #f39c12;">
                         <?php echo esc_html($not_searchable); ?>
                     </div>

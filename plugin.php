@@ -56,6 +56,12 @@ final class SiteKitForYandex
     public static function init()
     {
         self::instance();
+        load_plugin_textdomain(
+            'site-kit-for-yandex',
+            false,
+            dirname(plugin_basename(__FILE__)) . '/languages'
+        );
+
         foreach (glob(self::$instance->dir.'includes/*.php') as $file) {
             require_once $file;
         }
@@ -64,9 +70,7 @@ final class SiteKitForYandex
             require_once $file;
         }
 
-
         add_filter('plugin_action_links_'.plugin_basename(__FILE__), [self::instance(), 'plugin_action_links']);
-        
     }
 
     /**
