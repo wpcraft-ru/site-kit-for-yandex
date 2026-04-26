@@ -70,15 +70,15 @@ msgstr "Ошибки"
 msgid "Not Searchable"
 msgstr "Не в поиске"
 
-#: includes/DashboardWidget.php:260
+#: includes/DashboardWidget.php:261
 msgid "Top 10 posts in the last 28 days"
 msgstr "Топ 10 постов за 28 дней"
 
-#: includes/DashboardWidget.php:265
+#: includes/DashboardWidget.php:266
 msgid "Title and URL"
 msgstr "Заголовок и URL"
 
-#: includes/DashboardWidget.php:266
+#: includes/DashboardWidget.php:267
 msgid "Traffic"
 msgstr "Трафик"
 
@@ -634,4 +634,32 @@ msgstr ""
 
 #: includes/YandexWebmaster.php:389
 msgid "For integration, we use the Yandex.Webmaster API."
+msgstr ""
+
+#: includes/DashboardWidget.php:327
+msgid "You do not have permissions to access this data."
+msgstr ""
+
+#: includes/YandexPay.php:18
+msgid "Yandex Pay and Split"
+msgstr ""
+
+#: includes/YandexPay.php:28
+msgid "Yandex Pay and Split is an official payment plugin for WooCommerce that allows customers to pay for purchases with cashback in Plus points or in installments via Yandex Split."
+msgstr ""
+
+#: includes/YandexPay.php:30
+msgid "View official plugin"
+msgstr ""
+
+#: includes/YandexPay.php:35
+msgid "To configure the plugin, follow the official setup guide for WordPress and WooCommerce."
+msgstr ""
+
+#: includes/YandexPay.php:37
+msgid "Open setup instructions"
+msgstr ""
+
+#: includes/YandexPay.php:42
+msgid "For correct operation in WooCommerce, set a permalink structure other than Plain."
 msgstr ""
