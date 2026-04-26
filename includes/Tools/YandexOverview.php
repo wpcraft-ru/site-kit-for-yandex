@@ -6,15 +6,10 @@ YandexOverview::init();
 
 class YandexOverview
 {
-
-    private static $metrikaCounterId = null;
-
     public static function init()
     {
         add_action('admin_menu', [self::class, 'addMenu'], 20);
         add_action('site_kit_for_yandex_before_settings_form', [self::class, 'renderActionsForSettingsForm']);
-
-        self::$metrikaCounterId = skfy()->config()->get('metrika_counter_id');
     }
 
     public static function renderActionsForSettingsForm()
@@ -59,9 +54,10 @@ class YandexOverview
 
             <p>
                 <?php
+                $metrikaCounterId = YandexMetrika::getCounterId();
                 $metrikaUrl = 'https://metrika.yandex.ru';
-                if (! empty(self::$metrikaCounterId)) {
-                    $metrikaUrl = 'https://metrika.yandex.ru/overview?id='.(int) self::$metrikaCounterId;
+                if (! empty($metrikaCounterId)) {
+                    $metrikaUrl = 'https://metrika.yandex.ru/overview?id='.(int) $metrikaCounterId;
                 }
 
                 printf(
@@ -100,7 +96,7 @@ class YandexOverview
 
             self::renderSummary();
 
-            if (empty(self::$metrikaCounterId)) {
+            if (empty($metrikaCounterId)) {
                 printf(
                     '<p>%s</p>',
                     esc_html__('ID счётчика Яндекс.Метрики не установлен. Пожалуйста, укажите его в настройках плагина.', 'site-kit-for-yandex')
@@ -113,8 +109,62 @@ class YandexOverview
             echo '<hr>';
             self::renderTop10PagesForLast28Days();
             self::renderTop10KeyPhraseForLast28Days();
+            self::renderTop10WebmasterQueriesForLast14Days();
             ?>
         </div>
+        <?php
+    }
+
+    public static function renderTop10WebmasterQueriesForLast14Days()
+    {
+        printf('<h2>%s</h2>', esc_html__('Топ 10 запросов и страниц из Вебмастера', 'site-kit-for-yandex'));
+        printf('<p>%s</p>', esc_html__('Сортировка по кликам. За последние 14 дней. 14 дней это максимум для Вебмастера.', 'site-kit-for-yandex'));
+
+        $items = YandexWebmaster::getTop10WebmasterQueriesForLast14Days();
+
+        if (is_wp_error($items)) {
+            echo '<p>'.esc_html__('Ошибка получения данных вебмастера: ', 'site-kit-for-yandex').esc_html($items->get_error_message()).'</p>';
+            return;
+        }
+
+        if (empty($items)) {
+            echo '<p>'.esc_html__('Нет данных.', 'site-kit-for-yandex').'</p>';
+            return;
+        }
+
+        ?>
+        <table class="widefat fixed striped">
+            <thead>
+                <tr>
+                    <th><?php echo esc_html__('Query', 'site-kit-for-yandex'); ?></th>
+                    <th><?php echo esc_html__('Page URL', 'site-kit-for-yandex'); ?></th>
+                    <th><?php echo esc_html__('Impressions', 'site-kit-for-yandex'); ?></th>
+                    <th><?php echo esc_html__('Clicks', 'site-kit-for-yandex'); ?></th>
+                    <th><?php echo esc_html__('CTR, %', 'site-kit-for-yandex'); ?></th>
+                    <th><?php echo esc_html__('Avg position', 'site-kit-for-yandex'); ?></th>
+                    <th><?php echo esc_html__('Demand', 'site-kit-for-yandex'); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($items as $item) : ?>
+                    <tr>
+                        <td><?php echo esc_html($item['query']); ?></td>
+                        <td>
+                            <?php if (! empty($item['url'])) : ?>
+                                <a href="<?php echo esc_url($item['url']); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html($item['url']); ?></a>
+                            <?php else : ?>
+                                <?php echo esc_html('—'); ?>
+                            <?php endif; ?>
+                        </td>
+                        <td><?php echo esc_html(number_format_i18n((int) $item['impressions'])); ?></td>
+                        <td><?php echo esc_html(number_format_i18n((int) $item['clicks'])); ?></td>
+                        <td><?php echo esc_html(number_format_i18n((float) $item['ctr'], 2)); ?></td>
+                        <td><?php echo esc_html(number_format_i18n((float) $item['position'], 2)); ?></td>
+                        <td><?php echo esc_html(number_format_i18n((float) $item['demand'], 2)); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
         <?php
     }
 
@@ -122,7 +172,7 @@ class YandexOverview
     {
         printf('<h2>%s</h2>', esc_html__('Топ 10 ключевых фраз за последние 28 дней', 'site-kit-for-yandex'));
 
-        $items = self::getTop10KeyPhraseForLast28Days();
+        $items = YandexMetrika::getTop10KeyPhraseForLast28Days();
 
         if (is_wp_error($items)) {
             echo '<p>'.esc_html__('Ошибка получения данных метрики: ', 'site-kit-for-yandex').esc_html($items->get_error_message()).'</p>';
@@ -149,54 +199,11 @@ class YandexOverview
         <?php
     }
 
-    public static function getTop10KeyPhraseForLast28Days()
-    {
-        $cachedData = get_transient('skfy_metrika_top_10_keyphrase_28_days');
-        if (! empty($cachedData)) {
-            return $cachedData;
-        }
-
-        if (empty(self::$metrikaCounterId)) {
-            return new \WP_Error('no_counter_id', __('Metrika counter ID is not set.', 'site-kit-for-yandex'));
-        }
-
-        $query = [
-            'id' => (string) self::$metrikaCounterId,
-            'dimensions' => 'ym:s:searchPhrase',
-            'metrics' => 'ym:s:visits',
-            'sort' => '-ym:s:visits',
-            'limit' => 10,
-            'date1' => '28daysAgo',
-            'date2' => 'today',
-        ];
-
-        $data = self::metrikaApi('stat/v1/data?'.http_build_query($query));
-        if (is_wp_error($data)) {
-            return $data;
-        }
-
-        if (empty($data['data']) || ! is_array($data['data'])) {
-            return [];
-        }
-
-        $preparedData = [];
-        foreach ($data['data'] as $item) {
-            $preparedData[] = [
-                'phrase' => isset($item['dimensions'][0]['name']) ? $item['dimensions'][0]['name'] : '',
-                'visits' => isset($item['metrics'][0]) ? $item['metrics'][0] : 0,
-            ];
-        }
-
-        set_transient('skfy_metrika_top_10_keyphrase_28_days', $preparedData, HOUR_IN_SECONDS);
-
-        return $preparedData;
-    }
-
     public static function renderTop10PagesForLast28Days()
     {
         echo '<h2>'.esc_html__('Топ 10 страниц за последние 28 дней', 'site-kit-for-yandex').'</h2>';
 
-        $items = self::getTop10PagesForLast28Days();
+        $items = YandexMetrika::getTop10PagesForLast28Days();
 
         if (is_wp_error($items)) {
             echo '<p>'.esc_html__('Ошибка получения данных метрики: ', 'site-kit-for-yandex').esc_html($items->get_error_message()).'</p>';
@@ -215,8 +222,7 @@ class YandexOverview
             <tbody>
                 <?php foreach ($items as $item) : ?>
                     <tr>
-                        <td><a href="<?php echo esc_url($item['url']); ?>" target="_blank"
-                                rel="noopener noreferrer"><?php echo esc_html($item['url']); ?></a></td>
+                        <td><a href="<?php echo esc_url($item['url']); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html($item['url']); ?></a></td>
                         <td><?php echo esc_html($item['visits']); ?></td>
                         <td><?php echo esc_html($item['title']); ?></td>
                     </tr>
@@ -224,98 +230,6 @@ class YandexOverview
             </tbody>
         </table>
         <?php
-    }
-
-    public static function getTop10PagesForLast28Days()
-    {
-        $cachedData = get_transient('skfy_metrika_top_10_pages_28_days');
-        if (! empty($cachedData)) {
-            return $cachedData;
-        }
-
-        if (empty(self::$metrikaCounterId)) {
-            return new \WP_Error('no_counter_id', __('Metrika counter ID is not set.', 'site-kit-for-yandex'));
-        }
-
-        $query = [
-            'id' => (string) self::$metrikaCounterId,
-            'dimensions' => 'ym:s:startURL',
-            'metrics' => 'ym:s:visits',
-            'sort' => '-ym:s:visits',
-            'limit' => 10,
-            'date1' => '28daysAgo',
-            'date2' => 'today',
-        ];
-
-        $data = self::metrikaApi('stat/v1/data?'.http_build_query($query));
-        if (is_wp_error($data)) {
-            return $data;
-        }
-
-        if (empty($data['data']) || ! is_array($data['data'])) {
-            return [];
-        }
-
-        $preparedData = [];
-        foreach ($data['data'] as $item) {
-            $url = $item['dimensions'][0]['name'];
-            $visits = $item['metrics'][0];
-            $preparedData[] = [
-                'url' => $url,
-                'visits' => $visits,
-            ];
-        }
-
-        foreach ($preparedData as &$item) {
-            $postId = url_to_postid($item['url']);
-            if ($postId) {
-                $item['title'] = get_the_title($postId);
-            } else {
-                $item['title'] = '';
-            }
-        }
-
-        set_transient('skfy_metrika_top_10_pages_28_days', $preparedData, HOUR_IN_SECONDS);
-
-        return $preparedData;
-    }
-
-    public static function metrikaApi($path, $method = 'GET', $data = [])
-    {
-        $accessToken = skfy()->config()->getAccessToken();
-        if (! $accessToken) {
-            return new \WP_Error('no_access_token', __('Access token is not set.', 'site-kit-for-yandex'));
-        }
-
-        $url = 'https://api-metrika.yandex.net/'.ltrim($path, '/');
-
-        $args = [
-            'method' => $method,
-            'headers' => [
-                'Authorization' => "OAuth $accessToken",
-                'Content-Type' => 'application/json',
-            ],
-            'timeout' => 15,
-        ];
-
-        if (! empty($data)) {
-            $args['body'] = json_encode($data);
-        }
-
-        $response = wp_remote_request($url, $args);
-
-        if (is_wp_error($response)) {
-            return $response;
-        }
-
-        $code = wp_remote_retrieve_response_code($response);
-        $body = wp_remote_retrieve_body($response);
-
-        if ($code >= 200 && $code < 300) {
-            return json_decode($body, true);
-        }
-
-        return new \WP_Error('api_error', sprintf(__('API request failed with status code %d: %s', 'site-kit-for-yandex'), $code, $body));
     }
 
     public static function renderSqi()
@@ -485,7 +399,6 @@ class YandexOverview
     {
         return YandexWebmaster::apiSite($path, $method, $data);
     }
-
 
     public static function webmasterApi($path, $method = 'GET', $data = [])
     {

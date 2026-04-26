@@ -7,16 +7,12 @@ YandexURLInspector::init();
 class YandexURLInspector
 {
 
-    private static $metrikaCounterId = null;
-
     private static $siteScheme = '';
     private static $siteHost = '';
     private static $sitePort = 80;
 
     public static function init()
     {
-        self::$metrikaCounterId = skfy()->config()->get('metrika_counter_id');
-
         $homeUrl = home_url('/');
         self::$siteScheme = (string) wp_parse_url($homeUrl, PHP_URL_SCHEME);
         self::$siteHost   = (string) wp_parse_url($homeUrl, PHP_URL_HOST);
@@ -280,67 +276,9 @@ class YandexURLInspector
         }
     }
 
-    public static function getTrafficAndSources($url)
-    {
-        if (empty(self::$metrikaCounterId)) {
-            return new \WP_Error('no_counter_id', __('Metrika counter ID is not set.', 'site-kit-for-yandex'));
-        }
-
-        $query = [
-            'id' => (string) self::$metrikaCounterId,
-            'dimensions' => 'ym:s:trafficSourceName',
-            'metrics' => 'ym:s:visits,ym:s:users,ym:s:bounceRate,ym:s:avgVisitDurationSeconds,ym:s:pageDepth',
-            'filters' => "ym:s:startURL=='".$url."'",
-            'sort' => '-ym:s:visits',
-            'date1' => '28daysAgo',
-            'date2' => 'today',
-        ];
-
-        return YandexMetrika::api('stat/v1/data?'.http_build_query($query));
-    }
-
-    public static function getSearchPhrases($url)
-    {
-        if (empty(self::$metrikaCounterId)) {
-            return new \WP_Error('no_counter_id', __('Metrika counter ID is not set.', 'site-kit-for-yandex'));
-        }
-
-        $query = [
-            'id' => (string) self::$metrikaCounterId,
-            'dimensions' => 'ym:s:searchPhrase,ym:s:searchEngineName',
-            'metrics' => 'ym:s:visits,ym:s:users',
-            'filters' => "ym:s:startURL=='".$url."'",
-            'sort' => '-ym:s:visits',
-            'limit' => 20,
-            'date1' => '28daysAgo',
-            'date2' => 'today',
-        ];
-
-        return YandexMetrika::api('stat/v1/data?'.http_build_query($query));
-    }
-
-    public static function getQueryAnalytics($url, $limit = 20)
-    {
-        $body = [
-            'text_indicator' => 'URL',
-            'filters' => [
-                'text_filters' => [
-                    [
-                        'text_indicator' => 'URL',
-                        'operation' => 'TEXT_EQUAL',
-                        'value' => $url,
-                    ],
-                ],
-            ],
-            'limit' => $limit,
-        ];
-
-        return YandexWebmaster::apiSite('query-analytics/list', 'POST', $body);
-    }
-
     private static function renderTrafficAndSources($url)
     {
-        $data = self::getTrafficAndSources($url);
+        $data = YandexMetrika::getTrafficAndSources($url);
 
         echo '<h2>'.esc_html__('Трафик и источники (за 28 дней)', 'site-kit-for-yandex').'</h2>';
 
@@ -397,7 +335,7 @@ class YandexURLInspector
      */
     private static function renderSearchPhrases($url)
     {
-        $data = self::getSearchPhrases($url);
+        $data = YandexMetrika::getSearchPhrases($url);
 
         echo '<h2>'.esc_html__('Поисковые запросы (за 28 дней)', 'site-kit-for-yandex').'</h2>';
 
@@ -439,7 +377,7 @@ class YandexURLInspector
 
     private static function renderQueryAnalytics($url)
     {
-        $data = self::getQueryAnalytics($url);
+        $data = YandexWebmaster::getQueryAnalytics($url);
 
         echo '<h2>'.esc_html__('Поисковые запросы из Вебмастера', 'site-kit-for-yandex').'</h2>';
 
