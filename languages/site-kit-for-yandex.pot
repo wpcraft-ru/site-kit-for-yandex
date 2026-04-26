@@ -67,3 +67,15 @@ msgstr ""
 #: includes/DashboardWidget.php
 msgid "Not Searchable"
 msgstr ""
+
+#: includes/DashboardWidget.php
+msgid "Top 10 posts in the last 28 days"
+msgstr ""
+
+#: includes/DashboardWidget.php
+msgid "Title and URL"
+msgstr ""
+
+#: includes/DashboardWidget.php
+msgid "Traffic"
+msgstr ""

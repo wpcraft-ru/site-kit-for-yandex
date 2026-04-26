@@ -257,13 +257,13 @@ class DashboardWidget
         }
         ?>
         <div>
-            <p style="margin-top: 15px;"><strong><?php _e('Топ 10 постов за 28 дней', 'site-kit-for-yandex'); ?></strong></p>
+            <p style="margin-top: 15px;"><strong><?php _e('Top 10 posts in the last 28 days', 'site-kit-for-yandex'); ?></strong></p>
 
             <table class="widefat striped" style="margin-top: 8px;">
                 <thead>
                     <tr>
-                        <th><?php echo esc_html__('Заголовок и URL', 'site-kit-for-yandex'); ?></th>
-                        <th style="text-align: right;"><?php echo esc_html__('Трафик', 'site-kit-for-yandex'); ?></th>
+                        <th><?php echo esc_html__('Title and URL', 'site-kit-for-yandex'); ?></th>
+                        <th style="text-align: right;"><?php echo esc_html__('Traffic', 'site-kit-for-yandex'); ?></th>
                     </tr>
                 </thead>
                 <tbody>

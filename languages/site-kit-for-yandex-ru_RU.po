@@ -68,3 +68,15 @@ msgstr "Ошибки"
 #: includes/DashboardWidget.php
 msgid "Not Searchable"
 msgstr "Не в поиске"
+
+#: includes/DashboardWidget.php
+msgid "Top 10 posts in the last 28 days"
+msgstr "Топ 10 постов за 28 дней"
+
+#: includes/DashboardWidget.php
+msgid "Title and URL"
+msgstr "Заголовок и URL"
+
+#: includes/DashboardWidget.php
+msgid "Traffic"
+msgstr "Трафик"
