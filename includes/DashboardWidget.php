@@ -257,7 +257,8 @@ class DashboardWidget
         }
         ?>
         <div>
-            <p style="margin-top: 15px;"><strong><?php _e('Top 10 posts in the last 28 days', 'site-kit-for-yandex'); ?></strong></p>
+            <p style="margin-top: 15px;">
+                <strong><?php _e('Top 10 posts in the last 28 days', 'site-kit-for-yandex'); ?></strong></p>
 
             <table class="widefat striped" style="margin-top: 8px;">
                 <thead>
@@ -277,7 +278,8 @@ class DashboardWidget
                             <td>
                                 <div style="font-weight: 600;"><?php echo esc_html($title ?: $url); ?></div>
                                 <?php if (! empty($url)) : ?>
-                                    <a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener noreferrer" style="font-size: 12px; color: #50575e;">
+                                    <a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener noreferrer"
+                                        style="font-size: 12px; color: #50575e;">
                                         <?php echo esc_html($url); ?>
                                     </a>
                                 <?php endif; ?>
@@ -321,6 +323,10 @@ class DashboardWidget
      */
     public static function check_widget_access($request)
     {
+        if (! current_user_can('manage_options') && ! current_user_can('edit_posts')) {
+            return new \WP_Error('rest_forbidden', __('You do not have permissions to access this data.', 'site-kit-for-yandex'), ['status' => 403]);
+        }
+        
         return true;
     }
 
