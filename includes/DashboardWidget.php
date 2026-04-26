@@ -46,11 +46,11 @@ class DashboardWidget
 
         ?>
         <div class="sitekit-for-yandex-widget-content" id="sitekit-widget-loading">
-            <div style="padding: 20px; text-align: center; color: #666;">
+            <div class="sitekit-for-yandex-widget-stats">
                 <p><?php _e('Loading data...', 'sitekit-for-yandex'); ?></p>
             </div>
 
-            <p style="margin-top: 10px;"><strong><?php _e('Yandex Tools:', 'sitekit-for-yandex'); ?></strong></p>
+            <p style="margin-top: 15px;"><strong><?php _e('Yandex Tools:', 'sitekit-for-yandex'); ?></strong></p>
             <p>
                 <a href="<?php echo esc_url($overview_url); ?>" class="button button-secondary">
                     <?php _e('Overview', 'sitekit-for-yandex'); ?>
@@ -87,7 +87,7 @@ class DashboardWidget
                             const urlsHtml = data.urls_html || '';
 
                             // Replace loading div content with actual data
-                            const loadingDiv = container.querySelector('div[style*="padding: 20px"]');
+                            const loadingDiv = container.querySelector('div.sitekit-for-yandex-widget-stats');
                             if (loadingDiv) {
                                 loadingDiv.innerHTML = summaryHtml + urlsHtml;
                             }
@@ -113,8 +113,9 @@ class DashboardWidget
         $searchable_pages = isset($data['searchable_pages_count']) ? (int) $data['searchable_pages_count'] : null;
         $excluded_pages = isset($data['excluded_pages_count']) ? (int) $data['excluded_pages_count'] : null;
         ?>
-        <div style="background: #f5f5f5; padding: 12px; border-radius: 4px; margin-bottom: 12px; font-size: 13px;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div>
+            <p style="margin-top: 15px;"><strong><?php _e('Base indicators:', 'sitekit-for-yandex'); ?></strong></p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
                 <?php if (null !== $sqi) : ?>
                     <div>
                         <div style="color: #666; font-size: 12px;">ИКС</div>
@@ -164,23 +165,37 @@ class DashboardWidget
         $not_searchable = 0;
 
         foreach ($urls as $url_data) {
-            $searchable = isset($url_data['search_status']['searchable']) ? $url_data['search_status']['searchable'] : false;
-            $status = isset($url_data['indexing_status']['status']) ? $url_data['indexing_status']['status'] : '';
+            $searchable = isset($url_data['search_status']['searchable']) ? (bool) $url_data['search_status']['searchable'] : false;
+            $status = isset($url_data['indexing_status']['status']) ? (string) $url_data['indexing_status']['status'] : '';
+            $http_code = isset($url_data['indexing_status']['http_code']) ? (int) $url_data['indexing_status']['http_code'] : 0;
+            $has_error_message = ! empty($url_data['indexing_status']['error']) || ! empty($url_data['search_status']['error']);
 
             if (! $searchable) {
                 $not_searchable++;
-            } elseif ('Indexed' === $status) {
-                $indexed++;
-            } else {
+                continue;
+            }
+
+            // For the widget we treat searchable URLs as healthy by default.
+            $indexed++;
+
+            // Count as error only when API returns explicit error signals.
+            if ($http_code >= 400 || $has_error_message) {
+                $indexed--;
+                $indexing_errors++;
+                continue;
+            }
+
+            // Backward compatibility: keep explicit non-indexed error statuses.
+            $status_normalized = strtoupper($status);
+            if (in_array($status_normalized, ['ERROR', 'FAILED', 'NOT_INDEXED'], true)) {
+                $indexed--;
                 $indexing_errors++;
             }
         }
         ?>
-        <div
-            style="background: #fafafa; padding: 12px; border-radius: 4px; margin-bottom: 12px; font-size: 13px; border-left: 4px solid #0073aa;">
-            <div style="color: #666; font-size: 12px; margin-bottom: 8px;">
-                <?php _e('Мониторинг важных страниц', 'sitekit-for-yandex'); ?>
-            </div>
+        <div>
+            <p style="margin-top: 15px;"><strong><?php _e('Мониторинг важных страниц:', 'sitekit-for-yandex'); ?></strong></p>
+
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
                 <div>
                     <div style="color: #666; font-size: 11px;"><?php _e('Индексед', 'sitekit-for-yandex'); ?></div>
@@ -240,8 +255,8 @@ class DashboardWidget
      * REST API callback to get widget data
      *
      * @since 1.0.0
-     * @param WP_REST_Request $request REST request object
-     * @return WP_REST_Response|WP_Error
+     * @param \WP_REST_Request $request REST request object
+     * @return \WP_REST_Response|\WP_Error
      */
     public static function rest_get_widget_data($request)
     {
