@@ -259,7 +259,15 @@ class YandexWebmaster
             return json_decode($body, true);
         }
 
-        return new \WP_Error('api_error', sprintf(__('API request failed with status code %d: %s', 'site-kit-for-yandex'), $code, $body));
+        return new \WP_Error(
+            'api_error',
+            sprintf(
+                /* translators: 1: HTTP status code, 2: API response body. */
+                __('API request failed with status code %1$d: %2$s', 'site-kit-for-yandex'),
+                $code,
+                $body
+            )
+        );
     }
 
     private static function aggregateQueryAnalyticsStatistics($statistics)
@@ -366,21 +374,21 @@ class YandexWebmaster
 
                 printf(
                     '<p>%s</p>',
-                    esc_html__('Яндекс Вебмастер (Yandex Webmaster) — это бесплатный сервис для веб‑мастеров и владельцев сайтов, который помогает отслеживать состояние ресурса в поисковой выдаче Яндекса, анализировать его индексацию, выявлять технические ошибки и улучшать позиции в поиске.', 'site-kit-for-yandex')
+                    esc_html__('Yandex Webmaster is a free service for webmasters and site owners that helps track site status in Yandex search results, analyze indexing, identify technical issues, and improve search positions.', 'site-kit-for-yandex')
                 );
 
                 printf(
                     '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
-                    esc_html__('Подключение сайта и просмотр данных Яндекс.Вебмастера осуществляется через сайт', 'site-kit-for-yandex'),
+                    esc_html__('Connect your site and view Yandex.Webmaster data through', 'site-kit-for-yandex'),
                     esc_url('https://webmaster.yandex.ru/sites/'),
-                    esc_html__('Яндекс.Вебмастер', 'site-kit-for-yandex')
+                    esc_html__('Yandex.Webmaster', 'site-kit-for-yandex')
                 );
 
                 printf(
                     '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
-                    esc_html__('Для интеграции используем API Яндекс.Вебмастера.', 'site-kit-for-yandex'),
+                    esc_html__('For integration, we use the Yandex.Webmaster API.', 'site-kit-for-yandex'),
                     esc_url('https://yandex.ru/dev/webmaster/'),
-                    esc_html__('Документация API', 'site-kit-for-yandex')
+                    esc_html__('API Documentation', 'site-kit-for-yandex')
                 );
             },
             self::$pageSlug

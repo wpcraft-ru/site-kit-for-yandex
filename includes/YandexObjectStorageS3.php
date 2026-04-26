@@ -45,14 +45,14 @@ class YandexObjectStorageS3
     {
         ?>
         <p>
-            <?php echo esc_html__('Yandex Object Storage — S3-совместимое объектное хранилище для хранения и управления данными.', 'site-kit-for-yandex'); ?>
+            <?php echo esc_html__('Yandex Object Storage is an S3-compatible object storage for storing and managing data.', 'site-kit-for-yandex'); ?>
             <a href="https://yandex.cloud/ru/services/storage" target="_blank"
-                rel="noopener noreferrer"><?php echo esc_html__('Подробнее', 'site-kit-for-yandex'); ?></a>
+                rel="noopener noreferrer"><?php echo esc_html__('Learn more', 'site-kit-for-yandex'); ?></a>
         </p>
-        <p><?php echo esc_html__('Используется только под присмотром профессионалов, с пониманием всех особенностей, рисков и затрат на обслуживание.', 'site-kit-for-yandex'); ?>
+        <p><?php echo esc_html__('Use only under professional supervision, with full understanding of features, risks, and maintenance costs.', 'site-kit-for-yandex'); ?>
         </p>
         <p>
-            <?php echo esc_html__('Для настройки используйте проверенный плагин от известной команды Human Made:', 'site-kit-for-yandex'); ?>
+            <?php echo esc_html__('For setup, use a proven plugin from the well-known Human Made team:', 'site-kit-for-yandex'); ?>
             <a href="https://github.com/humanmade/S3-Uploads" target="_blank" rel="noopener noreferrer">
                 <span>S3-Uploads</span>
             </a>

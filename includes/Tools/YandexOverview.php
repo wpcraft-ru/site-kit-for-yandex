@@ -16,7 +16,7 @@ class YandexOverview
     {
         printf(
             '<p>%1$s <a href="%2$s">%3$s</a>.</p>',
-            esc_html__('Сводка по сайту доступна на странице', 'site-kit-for-yandex'),
+            esc_html__('Site overview is available on the page', 'site-kit-for-yandex'),
             esc_url(admin_url('tools.php?page=skfy-overview')),
             esc_html__('Yandex Overview', 'site-kit-for-yandex')
         );
@@ -47,7 +47,7 @@ class YandexOverview
                 printf(
                     '<a href="%1$s">%2$s</a>.',
                     esc_url(admin_url('options-general.php?page=site-kit-for-yandex')),
-                    esc_html__('Настройки плагина', 'site-kit-for-yandex')
+                    esc_html__('Plugin Settings', 'site-kit-for-yandex')
                 );
                 ?>
             </p>
@@ -62,7 +62,7 @@ class YandexOverview
 
                 printf(
                     '%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>.',
-                    esc_html__('Детали по Метрике:', 'site-kit-for-yandex'),
+                    esc_html__('Metrika Details:', 'site-kit-for-yandex'),
                     esc_url($metrikaUrl),
                     esc_html__('metrika.yandex.ru', 'site-kit-for-yandex')
                 );
@@ -73,7 +73,7 @@ class YandexOverview
                 <?php
                 printf(
                     '%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>.',
-                    esc_html__('Детали по ВебМастеру:', 'site-kit-for-yandex'),
+                    esc_html__('Webmaster Details:', 'site-kit-for-yandex'),
                     esc_url('https://webmaster.yandex.ru/'),
                     esc_html__('webmaster.yandex.ru', 'site-kit-for-yandex')
                 );
@@ -85,9 +85,9 @@ class YandexOverview
             if (! $accessToken) {
                 printf(
                     '<p>%s <a href="%s">%s</a>.</p>',
-                    esc_html__('Для просмотра данных Яндекса необходимо авторизоваться и получить токен доступа в', 'site-kit-for-yandex'),
+                    esc_html__('To view Yandex data, you need to authorize and get an access token in', 'site-kit-for-yandex'),
                     esc_url(admin_url('options-general.php?page=site-kit-for-yandex')),
-                    esc_html__('настройках плагина', 'site-kit-for-yandex')
+                    esc_html__('plugin settings', 'site-kit-for-yandex')
                 );
 
                 echo '</div>';
@@ -99,7 +99,7 @@ class YandexOverview
             if (empty($metrikaCounterId)) {
                 printf(
                     '<p>%s</p>',
-                    esc_html__('ID счётчика Яндекс.Метрики не установлен. Пожалуйста, укажите его в настройках плагина.', 'site-kit-for-yandex')
+                    esc_html__('Yandex.Metrika counter ID is not set. Please specify it in plugin settings.', 'site-kit-for-yandex')
                 );
 
                 echo '</div>';
@@ -117,18 +117,18 @@ class YandexOverview
 
     public static function renderTop10WebmasterQueriesForLast14Days()
     {
-        printf('<h2>%s</h2>', esc_html__('Топ 10 запросов и страниц из Вебмастера', 'site-kit-for-yandex'));
-        printf('<p>%s</p>', esc_html__('Сортировка по кликам. За последние 14 дней. 14 дней это максимум для Вебмастера.', 'site-kit-for-yandex'));
+        printf('<h2>%s</h2>', esc_html__('Top 10 Queries and Pages from Webmaster', 'site-kit-for-yandex'));
+        printf('<p>%s</p>', esc_html__('Sorted by clicks. Last 14 days. 14 days is the maximum for Webmaster.', 'site-kit-for-yandex'));
 
         $items = YandexWebmaster::getTop10WebmasterQueriesForLast14Days();
 
         if (is_wp_error($items)) {
-            echo '<p>'.esc_html__('Ошибка получения данных вебмастера: ', 'site-kit-for-yandex').esc_html($items->get_error_message()).'</p>';
+            echo '<p>'.esc_html__('Error getting Webmaster data: ', 'site-kit-for-yandex').esc_html($items->get_error_message()).'</p>';
             return;
         }
 
         if (empty($items)) {
-            echo '<p>'.esc_html__('Нет данных.', 'site-kit-for-yandex').'</p>';
+            echo '<p>'.esc_html__('No data.', 'site-kit-for-yandex').'</p>';
             return;
         }
 
@@ -170,12 +170,12 @@ class YandexOverview
 
     public static function renderTop10KeyPhraseForLast28Days()
     {
-        printf('<h2>%s</h2>', esc_html__('Топ 10 ключевых фраз за последние 28 дней', 'site-kit-for-yandex'));
+        printf('<h2>%s</h2>', esc_html__('Top 10 Key Phrases for the Last 28 Days', 'site-kit-for-yandex'));
 
         $items = YandexMetrika::getTop10KeyPhraseForLast28Days();
 
         if (is_wp_error($items)) {
-            echo '<p>'.esc_html__('Ошибка получения данных метрики: ', 'site-kit-for-yandex').esc_html($items->get_error_message()).'</p>';
+            echo '<p>'.esc_html__('Error getting Metrika data: ', 'site-kit-for-yandex').esc_html($items->get_error_message()).'</p>';
             return;
         }
 
@@ -201,12 +201,12 @@ class YandexOverview
 
     public static function renderTop10PagesForLast28Days()
     {
-        echo '<h2>'.esc_html__('Топ 10 страниц за последние 28 дней', 'site-kit-for-yandex').'</h2>';
+        echo '<h2>'.esc_html__('Top 10 Pages for the Last 28 Days', 'site-kit-for-yandex').'</h2>';
 
         $items = YandexMetrika::getTop10PagesForLast28Days();
 
         if (is_wp_error($items)) {
-            echo '<p>'.esc_html__('Ошибка получения данных метрики: ', 'site-kit-for-yandex').esc_html($items->get_error_message()).'</p>';
+            echo '<p>'.esc_html__('Error getting Metrika data: ', 'site-kit-for-yandex').esc_html($items->get_error_message()).'</p>';
             return;
         }
 
@@ -235,17 +235,17 @@ class YandexOverview
     public static function renderSqi()
     {
         ?>
-        <h2>Индекс качества сайта (ИКС)</h2>
+        <h2>Site Quality Index (SQI)</h2>
         <?php
 
         $value = self::getSqi();
-        printf('<p>ИКС: <strong>%s</strong></p>', esc_html($value));
+        printf('<p>%1$s <strong>%2$s</strong></p>', esc_html__('SQI:', 'site-kit-for-yandex'), esc_html($value));
     }
 
     public static function renderSummary()
     {
         ?>
-        <h2>Сводка по сайту</h2>
+        <h2><?php echo esc_html__('Site Summary', 'site-kit-for-yandex'); ?></h2>
         <?php
 
         $data = self::getSummary();
@@ -267,16 +267,16 @@ class YandexOverview
         <table class="widefat striped" style="max-width: 720px;">
             <tbody>
                 <tr>
-                    <td><strong><?php echo esc_html__('Индекс качества сайта (ИКС)', 'site-kit-for-yandex'); ?></strong></td>
+                    <td><strong><?php echo esc_html__('Site Quality Index (SQI)', 'site-kit-for-yandex'); ?></strong></td>
                     <td><?php echo null !== $sqi ? esc_html(number_format_i18n($sqi)) : '—'; ?></td>
                 </tr>
                 <tr>
-                    <td><strong><?php echo esc_html__('Страниц в поиске', 'site-kit-for-yandex'); ?></strong></td>
+                    <td><strong><?php echo esc_html__('Pages in Search', 'site-kit-for-yandex'); ?></strong></td>
                     <td><?php echo null !== $searchablePagesCount ? esc_html(number_format_i18n($searchablePagesCount)) : '—'; ?>
                     </td>
                 </tr>
                 <tr>
-                    <td><strong><?php echo esc_html__('Исключенных страниц', 'site-kit-for-yandex'); ?></strong></td>
+                    <td><strong><?php echo esc_html__('Excluded Pages', 'site-kit-for-yandex'); ?></strong></td>
                     <td><?php echo null !== $excludedPagesCount ? esc_html(number_format_i18n($excludedPagesCount)) : '—'; ?>
                     </td>
                 </tr>
@@ -286,8 +286,10 @@ class YandexOverview
                             <td>
                                 <strong>
                                     <?php
+                                    /* translators: %s: site problem severity level. */
                                     printf(
-                                        esc_html__('Проблемы сайта (%s)', 'site-kit-for-yandex'),
+                                        /* translators: %s: site problem severity level. */
+                                        esc_html__('Site Issues (%s)', 'site-kit-for-yandex'),
                                         esc_html($severity)
                                     );
                                     ?>
@@ -298,8 +300,8 @@ class YandexOverview
                     <?php endforeach; ?>
                 <?php else : ?>
                     <tr>
-                        <td><strong><?php echo esc_html__('Проблемы сайта', 'site-kit-for-yandex'); ?></strong></td>
-                        <td><?php echo esc_html__('Проблем не найдено.', 'site-kit-for-yandex'); ?></td>
+                        <td><strong><?php echo esc_html__('Site Issues', 'site-kit-for-yandex'); ?></strong></td>
+                        <td><?php echo esc_html__('No issues found.', 'site-kit-for-yandex'); ?></td>
                     </tr>
                 <?php endif; ?>
             </tbody>

@@ -211,7 +211,15 @@ class YandexMetrika
             return json_decode($body, true);
         }
 
-        return new \WP_Error('api_error', sprintf(__('API request failed with status code %d: %s', 'site-kit-for-yandex'), $code, $body));
+        return new \WP_Error(
+            'api_error',
+            sprintf(
+                /* translators: 1: HTTP status code, 2: API response body. */
+                __('API request failed with status code %1$d: %2$s', 'site-kit-for-yandex'),
+                $code,
+                $body
+            )
+        );
     }
 
     /**
@@ -254,7 +262,7 @@ class YandexMetrika
 
         printf(
             '<p class="description">%s</p>',
-            esc_html__('ID счётчика из Яндекс.Метрики, используется для запроса статистики через API.', 'site-kit-for-yandex')
+            esc_html__('Counter ID from Yandex.Metrika, used to request statistics via API.', 'site-kit-for-yandex')
         );
     }
 
@@ -267,28 +275,28 @@ class YandexMetrika
     {
         printf(
             '<p>%s</p>',
-            esc_html__('Яндекс Метрика — это бесплатный инструмент веб‑аналитики, который собирает данные о посещаемости сайта и поведении пользователей, чтобы владельцы ресурсов могли оценить эффективность рекламы, улучшить юзабилити и повысить конверсию.', 'site-kit-for-yandex')
+            esc_html__('Yandex Metrika is a free web analytics tool that collects traffic and user behavior data so site owners can evaluate ad performance, improve usability, and increase conversion.', 'site-kit-for-yandex')
         );
 
         printf(
             '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
-            esc_html__('Просмотр метрики осуществляется по ссылке: ', 'site-kit-for-yandex'),
+            esc_html__('Metrika can be viewed at: ', 'site-kit-for-yandex'),
             esc_url('https://metrika.yandex.ru/'),
             'metrika.yandex.ru'
         );
 
         printf(
             '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
-            esc_html__('Для подключения Яндекс.Метрики рекомендуем официальный плагин WordPress.', 'site-kit-for-yandex'),
+            esc_html__('For connecting Yandex.Metrika, we recommend the official WordPress plugin.', 'site-kit-for-yandex'),
             esc_url('https://ru.wordpress.org/plugins/wp-yandex-metrika/'),
             esc_html__('WP Yandex Metrika', 'site-kit-for-yandex')
         );
 
         printf(
             '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>.</p>',
-            esc_html__('Для получения данных метрики используйте официальный API Яндекса.', 'site-kit-for-yandex'),
+            esc_html__('To retrieve Metrika data, use the official Yandex API.', 'site-kit-for-yandex'),
             esc_url('https://yandex.ru/dev/metrika/ru/'),
-            esc_html__('API Яндекс.Метрика', 'site-kit-for-yandex')
+            esc_html__('Yandex.Metrika API', 'site-kit-for-yandex')
         );
     }
 }
