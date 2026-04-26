@@ -2,7 +2,7 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: @ Site Kit for Yandex 0.2.260330\n"
+"Project-Id-Version: Site Kit for Yandex 0.2.260330\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/site-kit-for-yandex\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 
 #. Plugin Name of the plugin
 #: plugin.php
-msgid "@ Site Kit for Yandex"
+msgid "Site Kit for Yandex"
 msgstr ""
 
 #. Plugin URI of the plugin

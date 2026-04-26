@@ -84,7 +84,7 @@ msgstr "Трафик"
 
 #. Plugin Name of the plugin
 #: plugin.php
-msgid "@ Site Kit for Yandex"
+msgid "Site Kit for Yandex"
 msgstr ""
 
 #. Plugin URI of the plugin
