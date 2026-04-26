@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: @ Site Kit for Yandex
+ * Plugin Name: Site Kit for Yandex
  * Plugin URI: https://github.com/wpcraft-ru/site-kit-for-yandex/
  * Description: WordPress plugin for integrating Yandex services with your site.
  * Author: WPCraft
