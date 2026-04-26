@@ -85,7 +85,7 @@ class YandexURLInspector
                     $searchable = isset($row['search_status']['searchable'])
                         ? ($row['search_status']['searchable'] ? esc_html__('Да', 'site-kit-for-yandex') : esc_html__('Нет', 'site-kit-for-yandex'))
                         : '—';
-                    $updateDate = isset($row['update_date']) ? (string) $row['update_date'] : '—';
+                    $updateDate = isset($row['update_date']) ? substr((string) $row['update_date'], 0, 10) : '—';
                     ?>
                     <tr>
                         <td>
