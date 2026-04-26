@@ -3,10 +3,17 @@
 Site Kit for Yandex is a WordPress plugin that integrates Yandex services into your website, providing insights and tools to optimize your site's performance and visibility on Yandex search engine.
 
 ## Includes
-- Smart Captcha
-- Yandex Webmaster Tools
 - Yandex Metrica
+- Yandex Webmaster Tools
+- Yandex IndexNow
 - Yandex ID (OAuth)
+- Smart Captcha
+- Yandex Pay
+- Yandex Ads
+- Yandex Object Storage (S3)
+- Yandex Overview (Tools)
+- Yandex URL Inspector (Tools)
+
 
 ## Roadmap
 
