@@ -61,7 +61,7 @@ final class Settings
                 ?>
             <div class="wrap">
                 <h1>Site Kit for Yandex</h1>
-                <p>Интегрируйте сайт с сервисами Яндекса (Метрика, Вебмастер и др.) и управляйте ими из админ‑панели WordPress — аналогично Site Kit by Google.</p>
+                <p><?php echo esc_html__('Integrate your site with Yandex services (Metrika, Webmaster, etc.) and manage them from the WordPress admin panel, similar to Site Kit by Google.', 'site-kit-for-yandex'); ?></p>
                 <?= self::renderActionsToSettingsPage(); ?>
                 <?php do_action('site_kit_for_yandex_before_settings_form'); ?>
                 <form method="post" action="options.php">
@@ -85,12 +85,12 @@ final class Settings
         $links = [
             [
                 'url' => "https://wpcraft.ru/wordpress/plugins/site-kit-for-yandex",
-                'text' => __('О плагине', 'site-kit-for-yandex'),
+                'text' => __('About Plugin', 'site-kit-for-yandex'),
                 'external' => true,
             ],
             [
                 'url' => 'https://wpcraft.ru/contacts',
-                'text' => __('Предложения и поддержка', 'site-kit-for-yandex'),
+                'text' => __('Feedback and Support', 'site-kit-for-yandex'),
                 'external' => true,
             ],
         ];
@@ -116,7 +116,7 @@ final class Settings
     {
         add_settings_section(
             self::$sectionId,
-            __('Авторизация - Яндекс OAuth', 'site-kit-for-yandex'),
+            __('Authorization - Yandex OAuth', 'site-kit-for-yandex'),
             [self::class, 'renderAuthorizationSectionText'],
             self::$pageSlug
         );
@@ -155,23 +155,23 @@ final class Settings
     {
         printf(
             '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>.</p>',
-            esc_html__('Для работы интеграции нужно получить ключи приложения в кабинете Яндекс OAuth:', 'site-kit-for-yandex'),
+            esc_html__('To use the integration, you need to get application keys in the Yandex OAuth dashboard:', 'site-kit-for-yandex'),
             esc_url('https://oauth.yandex.ru'),
-            esc_html__('получить ClientID и Client Secret', 'site-kit-for-yandex')
+            esc_html__('get ClientID and Client Secret', 'site-kit-for-yandex')
         );
 
         echo '<ol style="margin-left: 1.2em;">';
         printf(
             '<li>%s</li>',
-            esc_html__('Добавьте новое приложение и укажите название сайта, чтобы удобнее ориентироваться в списке приложений.', 'site-kit-for-yandex')
+            esc_html__('Add a new application and specify your site name to make it easier to navigate the app list.', 'site-kit-for-yandex')
         );
         printf(
             '<li>%s</li>',
-            esc_html__('В настройках приложения выдайте разрешения на доступ к данным Яндекс.Метрики и Яндекс.Вебмастера.', 'site-kit-for-yandex')
+            esc_html__('In app settings, grant permissions to access Yandex.Metrika and Yandex.Webmaster data.', 'site-kit-for-yandex')
         );
         printf(
             '<li>%s</li>',
-            esc_html__('После этого скопируйте полученные ClientID и Client Secret в поля выше и сохраните настройки.', 'site-kit-for-yandex')
+            esc_html__('After that, copy the received ClientID and Client Secret into the fields above and save settings.', 'site-kit-for-yandex')
         );
         echo '</ol>';
 
@@ -229,14 +229,14 @@ final class Settings
 
         printf(
             '<p>%s</p>',
-            esc_html__('Чтобы получить токен доступа, сначала введите ClientID и сохраните настройки.', 'site-kit-for-yandex')
+            esc_html__('To get an access token, first enter ClientID and save settings.', 'site-kit-for-yandex')
         );
 
         if (! empty($clientId)) {
             printf(
                 '<p><a href="%1$s" target="_blank" rel="noopener noreferrer">%2$s</a></p>',
                 esc_url('https://oauth.yandex.ru/authorize?response_type=token&client_id='.$clientId),
-                esc_html__('Получить токен доступа', 'site-kit-for-yandex')
+                esc_html__('Get Access Token', 'site-kit-for-yandex')
             );
         }
 

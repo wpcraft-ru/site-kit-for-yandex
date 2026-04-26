@@ -25,16 +25,16 @@ class YandexAds
     {
         printf(
             '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>.</p>',
-            esc_html__('Плагин от команды WPCraft для удобного размещения рекламы на сайте:', 'site-kit-for-yandex'),
+            esc_html__('A plugin by the WPCraft team for convenient ad placement on your site:', 'site-kit-for-yandex'),
             esc_url('https://wpcraft.ru/catalog/ads-media-planner'),
             esc_html__('Ads Media Planner', 'site-kit-for-yandex')
         );
 
         printf(
             '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>.</p>',
-            esc_html__('Размещайте рекламу на вашем сайте через Рекламную сеть Яндекса и зарабатывайте на трафике. Подключите площадку, настройте рекламные блоки и отслеживайте доход в удобной статистике.', 'site-kit-for-yandex'),
+            esc_html__('Place ads on your site via the Yandex Advertising Network and monetize traffic. Connect your platform, configure ad blocks, and track revenue in convenient statistics.', 'site-kit-for-yandex'),
             esc_url('https://yandex.ru/adv/publishers/monetization'),
-            esc_html__('Узнать больше о размещении рекламы на сайте', 'site-kit-for-yandex')
+            esc_html__('Learn more about placing ads on your site', 'site-kit-for-yandex')
         );
     }
 }

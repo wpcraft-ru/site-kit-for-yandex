@@ -1,0 +1,638 @@
+# Copyright (C) 2026 WPCraft
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Site Kit for Yandex 0.2.260330\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/site-kit-for-yandex\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-04-26T03:35:14+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: site-kit-for-yandex\n"
+
+#. Plugin Name of the plugin
+#: plugin.php
+msgid "Site Kit for Yandex"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: plugin.php
+msgid "https://github.com/wpcraft-ru/site-kit-for-yandex/"
+msgstr ""
+
+#. Description of the plugin
+#: plugin.php
+msgid "WordPress plugin for integrating Yandex services with your site."
+msgstr ""
+
+#. Author of the plugin
+#: plugin.php
+msgid "WPCraft"
+msgstr ""
+
+#. Author URI of the plugin
+#: plugin.php
+msgid "https://wpcraft.ru"
+msgstr ""
+
+#: includes/DashboardWidget.php:34
+msgid "Summary by Site Kit for Yandex"
+msgstr ""
+
+#: includes/DashboardWidget.php:49
+msgid "Yandex Tools:"
+msgstr ""
+
+#: includes/DashboardWidget.php:52
+msgid "Overview"
+msgstr ""
+
+#: includes/DashboardWidget.php:55
+msgid "URL Inspector"
+msgstr ""
+
+#: includes/DashboardWidget.php:60
+msgid "Loading data..."
+msgstr ""
+
+#: includes/DashboardWidget.php:133
+msgid "Base indicators:"
+msgstr ""
+
+#: includes/DashboardWidget.php:137
+msgid "SQI"
+msgstr ""
+
+#: includes/DashboardWidget.php:145
+#: includes/Tools/YandexURLInspector.php:69
+msgid "In Search"
+msgstr ""
+
+#: includes/DashboardWidget.php:153
+msgid "Excluded"
+msgstr ""
+
+#: includes/DashboardWidget.php:217
+msgid "Important Pages Monitoring:"
+msgstr ""
+
+#: includes/DashboardWidget.php:221
+msgid "Indexed"
+msgstr ""
+
+#: includes/DashboardWidget.php:227
+msgid "Errors"
+msgstr ""
+
+#: includes/DashboardWidget.php:233
+msgid "Not Searchable"
+msgstr ""
+
+#: includes/DashboardWidget.php:260
+msgid "Top 10 posts in the last 28 days"
+msgstr ""
+
+#: includes/DashboardWidget.php:265
+msgid "Title and URL"
+msgstr ""
+
+#: includes/DashboardWidget.php:266
+msgid "Traffic"
+msgstr ""
+
+#: includes/Settings.php:64
+msgid "Integrate your site with Yandex services (Metrika, Webmaster, etc.) and manage them from the WordPress admin panel, similar to Site Kit by Google."
+msgstr ""
+
+#: includes/Settings.php:88
+msgid "About Plugin"
+msgstr ""
+
+#: includes/Settings.php:93
+msgid "Feedback and Support"
+msgstr ""
+
+#: includes/Settings.php:119
+msgid "Authorization - Yandex OAuth"
+msgstr ""
+
+#: includes/Settings.php:126
+msgid "ClientID"
+msgstr ""
+
+#: includes/Settings.php:134
+msgid "Client Secret"
+msgstr ""
+
+#: includes/Settings.php:142
+msgid "Access Token"
+msgstr ""
+
+#: includes/Settings.php:158
+msgid "To use the integration, you need to get application keys in the Yandex OAuth dashboard:"
+msgstr ""
+
+#: includes/Settings.php:160
+msgid "get ClientID and Client Secret"
+msgstr ""
+
+#: includes/Settings.php:166
+msgid "Add a new application and specify your site name to make it easier to navigate the app list."
+msgstr ""
+
+#: includes/Settings.php:170
+msgid "In app settings, grant permissions to access Yandex.Metrika and Yandex.Webmaster data."
+msgstr ""
+
+#: includes/Settings.php:174
+msgid "After that, copy the received ClientID and Client Secret into the fields above and save settings."
+msgstr ""
+
+#: includes/Settings.php:232
+msgid "To get an access token, first enter ClientID and save settings."
+msgstr ""
+
+#: includes/Settings.php:239
+msgid "Get Access Token"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:19
+msgid "Site overview is available on the page"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:21
+msgid "Yandex Overview"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:30
+#: includes/Tools/YandexOverview.php:31
+#: includes/Tools/YandexOverview.php:43
+msgid "Yandex: Overview"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:50
+msgid "Plugin Settings"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:65
+msgid "Metrika Details:"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:67
+msgid "metrika.yandex.ru"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:76
+msgid "Webmaster Details:"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:78
+msgid "webmaster.yandex.ru"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:88
+msgid "To view Yandex data, you need to authorize and get an access token in"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:90
+#: includes/Tools/YandexURLInspector.php:176
+msgid "plugin settings"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:102
+msgid "Yandex.Metrika counter ID is not set. Please specify it in plugin settings."
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:120
+msgid "Top 10 Queries and Pages from Webmaster"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:121
+msgid "Sorted by clicks. Last 14 days. 14 days is the maximum for Webmaster."
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:126
+msgid "Error getting Webmaster data: "
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:131
+#: includes/Tools/YandexURLInspector.php:294
+#: includes/Tools/YandexURLInspector.php:350
+#: includes/Tools/YandexURLInspector.php:394
+msgid "No data."
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:139
+#: includes/Tools/YandexURLInspector.php:259
+#: includes/Tools/YandexURLInspector.php:357
+#: includes/Tools/YandexURLInspector.php:401
+msgid "Query"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:140
+#: includes/Tools/YandexOverview.php:217
+msgid "Page URL"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:141
+#: includes/Tools/YandexURLInspector.php:402
+msgid "Impressions"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:142
+#: includes/Tools/YandexURLInspector.php:403
+msgid "Clicks"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:143
+#: includes/Tools/YandexURLInspector.php:404
+msgid "CTR, %"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:144
+msgid "Avg position"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:145
+msgid "Demand"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:173
+msgid "Top 10 Key Phrases for the Last 28 Days"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:178
+#: includes/Tools/YandexOverview.php:209
+msgid "Error getting Metrika data: "
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:186
+msgid "Search phrase"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:187
+#: includes/Tools/YandexOverview.php:218
+#: includes/Tools/YandexURLInspector.php:302
+#: includes/Tools/YandexURLInspector.php:359
+msgid "Visits"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:204
+msgid "Top 10 Pages for the Last 28 Days"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:219
+msgid "Title"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:242
+msgid "SQI:"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:248
+msgid "Site Summary"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:270
+msgid "Site Quality Index (SQI)"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:274
+msgid "Pages in Search"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:279
+msgid "Excluded Pages"
+msgstr ""
+
+#. translators: %s: site problem severity level.
+#: includes/Tools/YandexOverview.php:292
+#, php-format
+msgid "Site Issues (%s)"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:303
+msgid "Site Issues"
+msgstr ""
+
+#: includes/Tools/YandexOverview.php:304
+msgid "No issues found."
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:36
+msgid "Yandex Webmaster: Important Pages Monitoring"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:42
+msgid "Important pages monitoring in Yandex.Webmaster"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:44
+msgid "URL Tracker"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:49
+msgid "API Method"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:61
+msgid "No data in important pages monitoring yet."
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:68
+#: includes/Tools/YandexURLInspector.php:234
+msgid "URL"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:70
+msgid "Indexing"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:71
+msgid "HTTP"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:72
+msgid "Update Date"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:82
+#: includes/Tools/YandexURLInspector.php:266
+msgid "Yes"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:82
+#: includes/Tools/YandexURLInspector.php:266
+msgid "No"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:110
+msgid "You can check whether a URL is in the Yandex index on the page"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:112
+#: includes/Tools/YandexURLInspector.php:120
+#: includes/Tools/YandexURLInspector.php:121
+#: includes/Tools/YandexURLInspector.php:131
+msgid "Yandex: URL Inspector"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:167
+msgid "<- Back to URL input"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:174
+msgid "To get URL data, you need to connect and configure Yandex.Webmaster in the"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:181
+msgid "Go to Yandex.Webmaster"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:183
+#: includes/YandexWebmaster.php:384
+msgid "Yandex.Webmaster"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:192
+msgid "Enter URL for analysis"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:196
+msgid "Analyze URL"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:212
+msgid "Invalid URL. Please specify the full address starting with http:// or https://"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:221
+msgid "Failed to parse URL."
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:228
+msgid "URL Analysis Result"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:241
+msgid "Scheme"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:247
+msgid "Host"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:253
+msgid "Path"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:265
+msgid "URL belongs to the current site"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:283
+msgid "Traffic and Sources (last 28 days)"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:301
+msgid "Source"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:303
+#: includes/Tools/YandexURLInspector.php:360
+msgid "Visitors"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:304
+msgid "Bounce Rate, %"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:305
+msgid "Time, s"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:306
+msgid "Depth"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:312
+msgid "Total"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:340
+msgid "Search Queries (last 28 days)"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:358
+msgid "Search Engine"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:366
+msgid "(undefined)"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:382
+msgid "Search Queries from Webmaster"
+msgstr ""
+
+#: includes/Tools/YandexURLInspector.php:405
+msgid "Avg. Position"
+msgstr ""
+
+#: includes/YandexAds.php:18
+msgid "Yandex Ads"
+msgstr ""
+
+#: includes/YandexAds.php:28
+msgid "A plugin by the WPCraft team for convenient ad placement on your site:"
+msgstr ""
+
+#: includes/YandexAds.php:30
+msgid "Ads Media Planner"
+msgstr ""
+
+#: includes/YandexAds.php:35
+msgid "Place ads on your site via the Yandex Advertising Network and monetize traffic. Connect your platform, configure ad blocks, and track revenue in convenient statistics."
+msgstr ""
+
+#: includes/YandexAds.php:37
+msgid "Learn more about placing ads on your site"
+msgstr ""
+
+#: includes/YandexID.php:18
+msgid "Yandex ID"
+msgstr ""
+
+#: includes/YandexID.php:30
+msgid "For Yandex ID authorization, you can use the proven Socialify authentication plugin that supports Yandex ID."
+msgstr ""
+
+#: includes/YandexID.php:32
+#: includes/YandexID.php:40
+#: includes/YandexObjectStorageS3.php:50
+msgid "Learn more"
+msgstr ""
+
+#: includes/YandexID.php:38
+msgid "Yandex ID is a unified account for accessing Yandex services and partner websites/apps that support this login method. It enables secure sign-in, management of personal data, payment details and settings, and simplifies authorization without remembering many usernames and passwords."
+msgstr ""
+
+#: includes/YandexIndexNow.php:18
+msgid "Yandex IndexNow"
+msgstr ""
+
+#: includes/YandexIndexNow.php:29
+msgid "Plugin officially recommended by Yandex:"
+msgstr ""
+
+#: includes/YandexIndexNow.php:31
+msgid "Recrawler"
+msgstr ""
+
+#: includes/YandexIndexNow.php:36
+msgid "Notify search engines about new or updated site pages using the IndexNow protocol."
+msgstr ""
+
+#: includes/YandexIndexNow.php:38
+#: includes/YandexWebmaster.php:391
+msgid "API Documentation"
+msgstr ""
+
+#: includes/YandexMetrika.php:43
+#: includes/YandexMetrika.php:92
+#: includes/YandexMetrika.php:142
+#: includes/YandexMetrika.php:162
+msgid "Metrika counter ID is not set."
+msgstr ""
+
+#: includes/YandexMetrika.php:183
+#: includes/YandexWebmaster.php:232
+msgid "Access token is not set."
+msgstr ""
+
+#. translators: 1: HTTP status code, 2: API response body.
+#: includes/YandexMetrika.php:218
+#: includes/YandexWebmaster.php:266
+#, php-format
+msgid "API request failed with status code %1$d: %2$s"
+msgstr ""
+
+#: includes/YandexMetrika.php:234
+msgid "Yandex Metrika"
+msgstr ""
+
+#: includes/YandexMetrika.php:241
+msgid "Metrika Counter ID"
+msgstr ""
+
+#: includes/YandexMetrika.php:265
+msgid "Counter ID from Yandex.Metrika, used to request statistics via API."
+msgstr ""
+
+#: includes/YandexMetrika.php:278
+msgid "Yandex Metrika is a free web analytics tool that collects traffic and user behavior data so site owners can evaluate ad performance, improve usability, and increase conversion."
+msgstr ""
+
+#: includes/YandexMetrika.php:283
+msgid "Metrika can be viewed at: "
+msgstr ""
+
+#: includes/YandexMetrika.php:290
+msgid "For connecting Yandex.Metrika, we recommend the official WordPress plugin."
+msgstr ""
+
+#: includes/YandexMetrika.php:292
+msgid "WP Yandex Metrika"
+msgstr ""
+
+#: includes/YandexMetrika.php:297
+msgid "To retrieve Metrika data, use the official Yandex API."
+msgstr ""
+
+#: includes/YandexMetrika.php:299
+msgid "Yandex.Metrika API"
+msgstr ""
+
+#: includes/YandexObjectStorageS3.php:33
+msgid "Yandex Object Storage - S3"
+msgstr ""
+
+#: includes/YandexObjectStorageS3.php:48
+msgid "Yandex Object Storage is an S3-compatible object storage for storing and managing data."
+msgstr ""
+
+#: includes/YandexObjectStorageS3.php:52
+msgid "Use only under professional supervision, with full understanding of features, risks, and maintenance costs."
+msgstr ""
+
+#: includes/YandexObjectStorageS3.php:55
+msgid "For setup, use a proven plugin from the well-known Human Made team:"
+msgstr ""
+
+#: includes/YandexWebmaster.php:214
+msgid "Site information is not available."
+msgstr ""
+
+#: includes/YandexWebmaster.php:372
+msgid "Yandex Webmaster"
+msgstr ""
+
+#: includes/YandexWebmaster.php:377
+msgid "Yandex Webmaster is a free service for webmasters and site owners that helps track site status in Yandex search results, analyze indexing, identify technical issues, and improve search positions."
+msgstr ""
+
+#: includes/YandexWebmaster.php:382
+msgid "Connect your site and view Yandex.Webmaster data through"
+msgstr ""
+
+#: includes/YandexWebmaster.php:389
+msgid "For integration, we use the Yandex.Webmaster API."
+msgstr ""
+
+#: plugin.php:120
+msgid "Settings"
+msgstr ""

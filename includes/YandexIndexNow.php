@@ -23,19 +23,19 @@ class YandexIndexNow
 
     public static function renderSectionText()
     {
-        //Плагин который рекомендуется официально от Яндекс https://wordpress.org/plugins/recrawler/ 
+        // Plugin officially recommended by Yandex: https://wordpress.org/plugins/recrawler/
         printf(
             '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>.</p>',
-            esc_html__('Плагин который рекомендуется официально от Яндекс:', 'site-kit-for-yandex'),
+            esc_html__('Plugin officially recommended by Yandex:', 'site-kit-for-yandex'),
             esc_url('https://wordpress.org/plugins/recrawler/'),
             esc_html__('Recrawler', 'site-kit-for-yandex')
         );
 
         printf(
             '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>.</p>',
-            esc_html__('Уведомление поисковых систем о новых или изменённых страницах сайта с помощью протокола IndexNow.', 'site-kit-for-yandex'),
+            esc_html__('Notify search engines about new or updated site pages using the IndexNow protocol.', 'site-kit-for-yandex'),
             esc_url('https://yandex.ru/dev/indexnow/'),
-            esc_html__('Документация API', 'site-kit-for-yandex')
+            esc_html__('API Documentation', 'site-kit-for-yandex')
         );
     }
 }

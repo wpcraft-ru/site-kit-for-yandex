@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: @ Site Kit for Yandex
- * Plugin URI: https://wpcraft.ru
+ * Plugin Name: Site Kit for Yandex
+ * Plugin URI: https://github.com/wpcraft-ru/site-kit-for-yandex/
  * Description: WordPress plugin for integrating Yandex services with your site.
  * Author: WPCraft
  * Author URI: https://wpcraft.ru
@@ -9,7 +9,8 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: site-kit-for-yandex
  * Domain Path: /languages
- * Version: 0.1.260329
+ * GitHub Plugin URI: https://github.com/wpcraft-ru/site-kit-for-yandex/
+ * Version: 0.2.260330
  */
 
 // Exit if accessed directly
@@ -55,6 +56,12 @@ final class SiteKitForYandex
     public static function init()
     {
         self::instance();
+        load_plugin_textdomain(
+            'site-kit-for-yandex',
+            false,
+            dirname(plugin_basename(__FILE__)) . '/languages'
+        );
+
         foreach (glob(self::$instance->dir.'includes/*.php') as $file) {
             require_once $file;
         }
@@ -63,9 +70,7 @@ final class SiteKitForYandex
             require_once $file;
         }
 
-
         add_filter('plugin_action_links_'.plugin_basename(__FILE__), [self::instance(), 'plugin_action_links']);
-        
     }
 
     /**

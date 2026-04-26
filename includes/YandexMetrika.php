@@ -21,6 +21,10 @@ class YandexMetrika
         add_action('admin_init', [self::class, 'registerSettingsSection']);
     }
 
+    public static function getCounterId()
+    {
+        return skfy()->config()->get('metrika_counter_id');
+    }
 
     public static function renderTop10KeyPhraseForLast28Days()
     {
@@ -29,7 +33,46 @@ class YandexMetrika
 
     public static function getTop10KeyPhraseForLast28Days()
     {
-        return YandexOverview::getTop10KeyPhraseForLast28Days();
+        $cachedData = get_transient('skfy_metrika_top_10_keyphrase_28_days');
+        if (! empty($cachedData)) {
+            return $cachedData;
+        }
+
+        $metrikaCounterId = self::getCounterId();
+        if (empty($metrikaCounterId)) {
+            return new \WP_Error('no_counter_id', __('Metrika counter ID is not set.', 'site-kit-for-yandex'));
+        }
+
+        $query = [
+            'id' => (string) $metrikaCounterId,
+            'dimensions' => 'ym:s:searchPhrase',
+            'metrics' => 'ym:s:visits',
+            'sort' => '-ym:s:visits',
+            'limit' => 10,
+            'date1' => '28daysAgo',
+            'date2' => 'today',
+        ];
+
+        $data = self::api('stat/v1/data?'.http_build_query($query));
+        if (is_wp_error($data)) {
+            return $data;
+        }
+
+        if (empty($data['data']) || ! is_array($data['data'])) {
+            return [];
+        }
+
+        $preparedData = [];
+        foreach ($data['data'] as $item) {
+            $preparedData[] = [
+                'phrase' => isset($item['dimensions'][0]['name']) ? $item['dimensions'][0]['name'] : '',
+                'visits' => isset($item['metrics'][0]) ? $item['metrics'][0] : 0,
+            ];
+        }
+
+        set_transient('skfy_metrika_top_10_keyphrase_28_days', $preparedData, HOUR_IN_SECONDS);
+
+        return $preparedData;
     }
 
     public static function renderTop10PagesForLast28Days()
@@ -39,12 +82,144 @@ class YandexMetrika
 
     public static function getTop10PagesForLast28Days()
     {
-        return YandexOverview::getTop10PagesForLast28Days();
+        $cachedData = get_transient('skfy_metrika_top_10_pages_28_days');
+        if (! empty($cachedData)) {
+            return $cachedData;
+        }
+
+        $metrikaCounterId = self::getCounterId();
+        if (empty($metrikaCounterId)) {
+            return new \WP_Error('no_counter_id', __('Metrika counter ID is not set.', 'site-kit-for-yandex'));
+        }
+
+        $query = [
+            'id' => (string) $metrikaCounterId,
+            'dimensions' => 'ym:s:startURL',
+            'metrics' => 'ym:s:visits',
+            'sort' => '-ym:s:visits',
+            'limit' => 10,
+            'date1' => '28daysAgo',
+            'date2' => 'today',
+        ];
+
+        $data = self::api('stat/v1/data?'.http_build_query($query));
+        if (is_wp_error($data)) {
+            return $data;
+        }
+
+        if (empty($data['data']) || ! is_array($data['data'])) {
+            return [];
+        }
+
+        $preparedData = [];
+        foreach ($data['data'] as $item) {
+            $url = $item['dimensions'][0]['name'];
+            $visits = $item['metrics'][0];
+            $preparedData[] = [
+                'url' => $url,
+                'visits' => $visits,
+            ];
+        }
+
+        foreach ($preparedData as &$item) {
+            $postId = url_to_postid($item['url']);
+            if ($postId) {
+                $item['title'] = get_the_title($postId);
+            } else {
+                $item['title'] = '';
+            }
+        }
+
+        set_transient('skfy_metrika_top_10_pages_28_days', $preparedData, HOUR_IN_SECONDS);
+
+        return $preparedData;
+    }
+
+    public static function getTrafficAndSources($url)
+    {
+        $counterId = self::getCounterId();
+        if (empty($counterId)) {
+            return new \WP_Error('no_counter_id', __('Metrika counter ID is not set.', 'site-kit-for-yandex'));
+        }
+
+        $query = [
+            'id' => (string) $counterId,
+            'dimensions' => 'ym:s:trafficSourceName',
+            'metrics' => 'ym:s:visits,ym:s:users,ym:s:bounceRate,ym:s:avgVisitDurationSeconds,ym:s:pageDepth',
+            'filters' => "ym:s:startURL=='".esc_url_raw($url)."'",
+            'sort' => '-ym:s:visits',
+            'date1' => '28daysAgo',
+            'date2' => 'today',
+        ];
+
+        return self::api('stat/v1/data?'.http_build_query($query));
+    }
+
+    public static function getSearchPhrases($url)
+    {
+        $counterId = self::getCounterId();
+        if (empty($counterId)) {
+            return new \WP_Error('no_counter_id', __('Metrika counter ID is not set.', 'site-kit-for-yandex'));
+        }
+
+        $query = [
+            'id' => (string) $counterId,
+            'dimensions' => 'ym:s:searchPhrase,ym:s:searchEngineName',
+            'metrics' => 'ym:s:visits,ym:s:users',
+            'filters' => "ym:s:startURL=='".esc_url_raw($url)."'",
+            'sort' => '-ym:s:visits',
+            'limit' => 20,
+            'date1' => '28daysAgo',
+            'date2' => 'today',
+        ];
+
+        return self::api('stat/v1/data?'.http_build_query($query));
     }
 
     public static function api($path, $method = 'GET', $data = [])
     {
-        return YandexOverview::metrikaApi($path, $method, $data);
+        $accessToken = skfy()->config()->getAccessToken();
+        if (! $accessToken) {
+            return new \WP_Error('no_access_token', __('Access token is not set.', 'site-kit-for-yandex'));
+        }
+
+        $url = 'https://api-metrika.yandex.net/'.ltrim($path, '/');
+
+        $args = [
+            'method' => $method,
+            'headers' => [
+                'Authorization' => "OAuth $accessToken",
+                'Content-Type' => 'application/json',
+            ],
+            'timeout' => 15,
+        ];
+
+        if (! empty($data)) {
+            $args['body'] = json_encode($data);
+        }
+
+        $response = wp_remote_request($url, $args);
+
+        if (is_wp_error($response)) {
+            return $response;
+        }
+
+        $code = wp_remote_retrieve_response_code($response);
+        $body = wp_remote_retrieve_body($response);
+
+        if ($code >= 200 && $code < 300) {
+            return json_decode($body, true);
+        }
+
+        return new \WP_Error(
+            'api_error',
+            sprintf(
+                /* translators: 1: HTTP status code, 2: API response body. */
+                __('API request failed with status code %1$d: %2$s', 'site-kit-for-yandex'),
+                $code,
+                $body
+            )
+        );
     }
 
     /**
@@ -87,7 +262,7 @@ class YandexMetrika
 
         printf(
             '<p class="description">%s</p>',
-            esc_html__('ID счётчика из Яндекс.Метрики, используется для запроса статистики через API.', 'site-kit-for-yandex')
+            esc_html__('Counter ID from Yandex.Metrika, used to request statistics via API.', 'site-kit-for-yandex')
         );
     }
 
@@ -100,28 +275,28 @@ class YandexMetrika
     {
         printf(
             '<p>%s</p>',
-            esc_html__('Яндекс Метрика — это бесплатный инструмент веб‑аналитики, который собирает данные о посещаемости сайта и поведении пользователей, чтобы владельцы ресурсов могли оценить эффективность рекламы, улучшить юзабилити и повысить конверсию.', 'site-kit-for-yandex')
+            esc_html__('Yandex Metrika is a free web analytics tool that collects traffic and user behavior data so site owners can evaluate ad performance, improve usability, and increase conversion.', 'site-kit-for-yandex')
         );
 
         printf(
             '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
-            esc_html__('Просмотр метрики осуществляется по ссылке: ', 'site-kit-for-yandex'),
+            esc_html__('Metrika can be viewed at: ', 'site-kit-for-yandex'),
             esc_url('https://metrika.yandex.ru/'),
             'metrika.yandex.ru'
         );
 
         printf(
             '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a></p>',
-            esc_html__('Для подключения Яндекс.Метрики рекомендуем официальный плагин WordPress.', 'site-kit-for-yandex'),
+            esc_html__('For connecting Yandex.Metrika, we recommend the official WordPress plugin.', 'site-kit-for-yandex'),
             esc_url('https://ru.wordpress.org/plugins/wp-yandex-metrika/'),
             esc_html__('WP Yandex Metrika', 'site-kit-for-yandex')
         );
 
         printf(
             '<p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a>.</p>',
-            esc_html__('Для получения данных метрики используйте официальный API Яндекса.', 'site-kit-for-yandex'),
+            esc_html__('To retrieve Metrika data, use the official Yandex API.', 'site-kit-for-yandex'),
             esc_url('https://yandex.ru/dev/metrika/ru/'),
-            esc_html__('API Яндекс.Метрика', 'site-kit-for-yandex')
+            esc_html__('Yandex.Metrika API', 'site-kit-for-yandex')
         );
     }
 }
