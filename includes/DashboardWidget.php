@@ -198,7 +198,7 @@ class DashboardWidget
 
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
                 <div>
-                    <div style="color: #666; font-size: 11px;"><?php _e('Индексед', 'sitekit-for-yandex'); ?></div>
+                    <div style="color: #666; font-size: 11px;"><?php _e('В поиске', 'sitekit-for-yandex'); ?></div>
                     <div style="font-weight: bold; font-size: 16px; color: #27ae60;">
                         <?php echo esc_html($indexed); ?>
                     </div>
