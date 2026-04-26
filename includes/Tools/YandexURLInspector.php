@@ -150,7 +150,7 @@ class YandexURLInspector
     private static function getUrl()
     {
         $rawUrl = isset($_GET['url']) ? $_GET['url'] : '';
-        return is_string($rawUrl) ? trim($rawUrl) : '';
+        return is_string($rawUrl) ? esc_url_raw(trim($rawUrl)) : '';
     }
 
     private static function renderUrlInputForm()
