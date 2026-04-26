@@ -10,7 +10,7 @@
  * Text Domain: site-kit-for-yandex
  * Domain Path: /languages
  * GitHub Plugin URI: https://github.com/wpcraft-ru/site-kit-for-yandex/
- * Version: 0.2.260330
+ * Version: 0.3.260426
  */
 
 // Exit if accessed directly
