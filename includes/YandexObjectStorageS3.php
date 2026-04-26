@@ -18,7 +18,7 @@ class YandexObjectStorageS3
 
     public static function init()
     {
-        add_action('admin_init', [self::class, 'registerSettingsSection'], 90);
+        add_action('admin_init', [self::class, 'registerSettingsSection'], 150);
     }
 
     /**

@@ -84,7 +84,7 @@ final class Settings
     {
         $links = [
             [
-                'url' => "https://wpcraft.ru/wordpress/plugins/site-kit-for-yandex",
+                'url' => "https://wpcraft.ru/projects/site-kit-for-yandex",
                 'text' => __('About Plugin', 'site-kit-for-yandex'),
                 'external' => true,
             ],

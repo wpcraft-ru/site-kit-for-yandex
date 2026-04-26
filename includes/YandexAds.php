@@ -8,7 +8,7 @@ class YandexAds
 {
     public static function init()
     {
-        add_action('admin_init', [self::class, 'registerSettingsSection'], 60);
+        add_action('admin_init', [self::class, 'registerSettingsSection'], 110);
     }
 
     public static function registerSettingsSection()

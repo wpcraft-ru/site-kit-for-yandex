@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Site Kit for Yandex 0.2.260330\n"
+"Project-Id-Version: Site Kit for Yandex 0.3.260426\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/site-kit-for-yandex\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-04-26T03:35:14+00:00\n"
+"POT-Creation-Date: 2026-04-26T05:50:59+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: site-kit-for-yandex\n"
@@ -92,16 +92,20 @@ msgstr ""
 msgid "Not Searchable"
 msgstr ""
 
-#: includes/DashboardWidget.php:260
+#: includes/DashboardWidget.php:261
 msgid "Top 10 posts in the last 28 days"
 msgstr ""
 
-#: includes/DashboardWidget.php:265
+#: includes/DashboardWidget.php:266
 msgid "Title and URL"
 msgstr ""
 
-#: includes/DashboardWidget.php:266
+#: includes/DashboardWidget.php:267
 msgid "Traffic"
+msgstr ""
+
+#: includes/DashboardWidget.php:327
+msgid "You do not have permissions to access this data."
 msgstr ""
 
 #: includes/Settings.php:64
@@ -611,6 +615,30 @@ msgstr ""
 
 #: includes/YandexObjectStorageS3.php:55
 msgid "For setup, use a proven plugin from the well-known Human Made team:"
+msgstr ""
+
+#: includes/YandexPay.php:18
+msgid "Yandex Pay and Split"
+msgstr ""
+
+#: includes/YandexPay.php:28
+msgid "Yandex Pay and Split is an official payment plugin for WooCommerce that allows customers to pay for purchases with cashback in Plus points or in installments via Yandex Split."
+msgstr ""
+
+#: includes/YandexPay.php:30
+msgid "View official plugin"
+msgstr ""
+
+#: includes/YandexPay.php:35
+msgid "To configure the plugin, follow the official setup guide for WordPress and WooCommerce."
+msgstr ""
+
+#: includes/YandexPay.php:37
+msgid "Open setup instructions"
+msgstr ""
+
+#: includes/YandexPay.php:42
+msgid "For correct operation in WooCommerce, set a permalink structure other than Plain."
 msgstr ""
 
 #: includes/YandexWebmaster.php:214
