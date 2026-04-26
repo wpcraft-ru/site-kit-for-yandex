@@ -12,11 +12,12 @@ class DashboardWidget
 {
 
     /**
-     * Initialize the widget
+     * Initialize the widget and REST endpoint
      */
     public static function init()
     {
         add_action('wp_dashboard_setup', [self::class, 'register_widget']);
+        add_action('rest_api_init', [self::class, 'register_rest_endpoint']);
     }
 
     /**
@@ -24,6 +25,10 @@ class DashboardWidget
      */
     public static function register_widget()
     {
+        if (! current_user_can('manage_options') && ! current_user_can('edit_posts')) {
+            return;
+        }
+
         wp_add_dashboard_widget(
             'sitekit_for_yandex',           // Widget ID
             __('Overview from Yandex', 'sitekit-for-yandex'),        // Widget Title
@@ -38,11 +43,12 @@ class DashboardWidget
     {
         $overview_url = admin_url('tools.php?page=skfy-overview');
         $inspector_url = admin_url('tools.php?page=skfy-url-inspector');
-        ?>
-        <div class="sitekit-for-yandex-widget-content">
 
-            <?php self::render_summary_metrics(); ?>
-            <?php self::render_important_pages_status(); ?>
+        ?>
+        <div class="sitekit-for-yandex-widget-content" id="sitekit-widget-loading">
+            <div style="padding: 20px; text-align: center; color: #666;">
+                <p><?php _e('Loading data...', 'sitekit-for-yandex'); ?></p>
+            </div>
 
             <p style="margin-top: 10px;"><strong><?php _e('Yandex Tools:', 'sitekit-for-yandex'); ?></strong></p>
             <p>
@@ -54,6 +60,42 @@ class DashboardWidget
                 </a>
             </p>
         </div>
+
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+                const container = document.getElementById('sitekit-widget-loading');
+                if (!container) return;
+
+                const restUrl = <?php echo wp_json_encode(rest_url('sitekit-for-yandex/v1/dashboard-widget-data')); ?>;
+
+                fetch(restUrl, {
+                    method: 'GET',
+                    headers: {
+                        'X-WP-Nonce': <?php echo wp_json_encode(wp_create_nonce('wp_rest')); ?>,
+                        'Content-Type': 'application/json',
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.summary_html || data.urls_html) {
+                            const summaryHtml = data.summary_html || '';
+                            const urlsHtml = data.urls_html || '';
+
+                            // Replace loading div content with actual data
+                            const loadingDiv = container.querySelector('div[style*="padding: 20px"]');
+                            if (loadingDiv) {
+                                loadingDiv.innerHTML = summaryHtml + urlsHtml;
+                            }
+                        }
+                    });
+            });
+        </script>
+
         <?php
     }
 
@@ -137,7 +179,8 @@ class DashboardWidget
         <div
             style="background: #fafafa; padding: 12px; border-radius: 4px; margin-bottom: 12px; font-size: 13px; border-left: 4px solid #0073aa;">
             <div style="color: #666; font-size: 12px; margin-bottom: 8px;">
-                <?php _e('Мониторинг важных страниц', 'sitekit-for-yandex'); ?></div>
+                <?php _e('Мониторинг важных страниц', 'sitekit-for-yandex'); ?>
+            </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
                 <div>
                     <div style="color: #666; font-size: 11px;"><?php _e('Индексед', 'sitekit-for-yandex'); ?></div>
@@ -160,6 +203,75 @@ class DashboardWidget
             </div>
         </div>
         <?php
+    }
+
+    /**
+     * Register REST API endpoint for dashboard widget data
+     *
+     * @since 1.0.0
+     * @return void
+     */
+    public static function register_rest_endpoint()
+    {
+        register_rest_route(
+            'sitekit-for-yandex/v1',
+            '/dashboard-widget-data',
+            [
+                'methods' => 'GET',
+                'callback' => [self::class, 'rest_get_widget_data'],
+                'permission_callback' => [self::class, 'check_widget_access'],
+            ]
+        );
+    }
+
+    /**
+     * Check if user has permission to access widget data
+     *
+     * @since 1.0.0
+     * @param \WP_REST_Request $request REST request object
+     * @return bool|\WP_Error
+     */
+    public static function check_widget_access($request)
+    {
+        return true;
+    }
+
+    /**
+     * REST API callback to get widget data
+     *
+     * @since 1.0.0
+     * @param WP_REST_Request $request REST request object
+     * @return WP_REST_Response|WP_Error
+     */
+    public static function rest_get_widget_data($request)
+    {
+        $data = self::get_widget_html_data();
+
+        return rest_ensure_response($data);
+    }
+
+    /**
+     * Get widget HTML data
+     *
+     * Collects HTML output from both render methods and returns as array
+     *
+     * @since 1.0.0
+     * @return array
+     */
+    private static function get_widget_html_data()
+    {
+        ob_start();
+        self::render_summary_metrics();
+        $summary_html = ob_get_clean();
+
+        ob_start();
+        self::render_important_pages_status();
+        $urls_html = ob_get_clean();
+
+        return [
+            'summary_html' => $summary_html ?: '',
+            'urls_html' => $urls_html ?: '',
+        ];
     }
 }
 
