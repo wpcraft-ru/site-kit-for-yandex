@@ -7,7 +7,7 @@ Site Kit for Yandex is a WordPress plugin that integrates Yandex services into y
 - Yandex Webmaster Tools
 - Yandex IndexNow
 - Yandex ID (OAuth)
-- Smart Captcha
+- Yandex SmartCaptcha
 - Yandex Pay
 - Yandex Ads
 - Yandex Object Storage (S3)
