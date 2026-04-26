@@ -157,7 +157,7 @@ class YandexURLInspector
     {
         $defaultUrl = home_url('/');
         $url = self::getUrl();
-        $currentUrl = '' !== $url ? esc_url_raw($url) : $defaultUrl;
+        $currentUrl = empty($url) ? $defaultUrl : $url;
         
         if(!empty($url)){
             //return to main page
