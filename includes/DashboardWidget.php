@@ -46,10 +46,6 @@ class DashboardWidget
 
         ?>
         <div class="sitekit-for-yandex-widget-content" id="sitekit-widget-loading">
-            <div class="sitekit-for-yandex-widget-stats">
-                <p><?php _e('Loading data...', 'site-kit-for-yandex'); ?></p>
-            </div>
-
             <p style="margin-top: 15px;"><strong><?php _e('Yandex Tools:', 'site-kit-for-yandex'); ?></strong></p>
             <p>
                 <a href="<?php echo esc_url($overview_url); ?>" class="button button-secondary">
@@ -59,6 +55,11 @@ class DashboardWidget
                     <?php _e('URL Inspector', 'site-kit-for-yandex'); ?>
                 </a>
             </p>
+
+            <div class="sitekit-for-yandex-widget-stats">
+                <p><?php _e('Loading data...', 'site-kit-for-yandex'); ?></p>
+            </div>
+
         </div>
 
         <script type="text/javascript">
@@ -82,16 +83,29 @@ class DashboardWidget
                         return response.json();
                     })
                     .then(data => {
-                        if (data.summary_html || data.urls_html) {
-                            const summaryHtml = data.summary_html || '';
-                            const urlsHtml = data.urls_html || '';
-
-                            // Replace loading div content with actual data
-                            const loadingDiv = container.querySelector('div.sitekit-for-yandex-widget-stats');
-                            if (loadingDiv) {
-                                loadingDiv.innerHTML = summaryHtml + urlsHtml;
-                            }
+                        if (!data || typeof data !== 'object') {
+                            return;
                         }
+
+                        // Replace loading block content with all values received from the API.
+                        const statsContainer = container.querySelector('div.sitekit-for-yandex-widget-stats');
+                        if (!statsContainer) {
+                            return;
+                        }
+
+                        statsContainer.innerHTML = '';
+
+                        Object.entries(data).forEach(([key, value]) => {
+                            const html = String(value || '');
+                            if (!html) {
+                                return;
+                            }
+
+                            const item = document.createElement('div');
+                            item.className = `sitekit-for-yandex-widget-item ${String(key).replace(/[^a-zA-Z0-9_-]/g, '-')}`;
+                            item.innerHTML = html;
+                            statsContainer.appendChild(item);
+                        });
                     });
             });
         </script>
@@ -104,9 +118,11 @@ class DashboardWidget
      */
     private static function render_summary_metrics()
     {
+        ob_start();
+
         $data = YandexOverview::getSummary();
         if (is_wp_error($data)) {
-            return;
+            return ob_get_clean() ?: '';
         }
 
         $sqi = isset($data['sqi']) ? (int) $data['sqi'] : null;
@@ -143,6 +159,8 @@ class DashboardWidget
             </div>
         </div>
         <?php
+
+        return ob_get_clean() ?: '';
     }
 
     /**
@@ -150,14 +168,16 @@ class DashboardWidget
      */
     private static function render_important_pages_status()
     {
+        ob_start();
+
         $data = YandexWebmaster::apiSite('important-urls');
         if (is_wp_error($data)) {
-            return;
+            return ob_get_clean() ?: '';
         }
 
         $urls = isset($data['urls']) && is_array($data['urls']) ? $data['urls'] : [];
         if (empty($urls)) {
-            return;
+            return ob_get_clean() ?: '';
         }
 
         $indexed = 0;
@@ -218,6 +238,59 @@ class DashboardWidget
             </div>
         </div>
         <?php
+
+        return ob_get_clean() ?: '';
+    }
+
+    /**
+     * Render top 10 pages by traffic from Yandex Metrika
+     *
+     * @return string
+     */
+    private static function render_top10_posts_traffic()
+    {
+        ob_start();
+
+        $items = YandexMetrika::getTop10PagesForLast28Days();
+        if (is_wp_error($items) || empty($items)) {
+            return ob_get_clean() ?: '';
+        }
+        ?>
+        <div>
+            <p style="margin-top: 15px;"><strong><?php _e('Топ 10 постов за 28 дней', 'site-kit-for-yandex'); ?></strong></p>
+
+            <table class="widefat striped" style="margin-top: 8px;">
+                <thead>
+                    <tr>
+                        <th><?php echo esc_html__('Заголовок и URL', 'site-kit-for-yandex'); ?></th>
+                        <th style="text-align: right;"><?php echo esc_html__('Трафик', 'site-kit-for-yandex'); ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($items as $item) : ?>
+                        <?php
+                        $title = isset($item['title']) ? (string) $item['title'] : '';
+                        $url = isset($item['url']) ? (string) $item['url'] : '';
+                        $visits = isset($item['visits']) ? (int) $item['visits'] : 0;
+                        ?>
+                        <tr>
+                            <td>
+                                <div style="font-weight: 600;"><?php echo esc_html($title ?: $url); ?></div>
+                                <?php if (! empty($url)) : ?>
+                                    <a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener noreferrer" style="font-size: 12px; color: #50575e;">
+                                        <?php echo esc_html($url); ?>
+                                    </a>
+                                <?php endif; ?>
+                            </td>
+                            <td style="text-align: right;"><?php echo esc_html(number_format_i18n($visits)); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php
+
+        return ob_get_clean() ?: '';
     }
 
     /**
@@ -275,17 +348,10 @@ class DashboardWidget
      */
     private static function get_widget_html_data()
     {
-        ob_start();
-        self::render_summary_metrics();
-        $summary_html = ob_get_clean();
-
-        ob_start();
-        self::render_important_pages_status();
-        $urls_html = ob_get_clean();
-
         return [
-            'summary_html' => $summary_html ?: '',
-            'urls_html' => $urls_html ?: '',
+            'summary_html' => self::render_summary_metrics(),
+            'urls_html' => self::render_important_pages_status(),
+            'top10content' => self::render_top10_posts_traffic(),
         ];
     }
 }
